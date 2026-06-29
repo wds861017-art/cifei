@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>CHI-FEI 齊飛品牌行銷</title>
+<style>
+:root{--blue-dark:#0F4C81;--blue:#1F6FB5;--gold:#F2A93B;--gold-dark:#D98E1E;--grey:#5A6B7B;--light:#E8F1F9;--bg:#F4F8FC;--green:#2E9E5B;--red:#C0392B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Microsoft JhengHei","PingFang TC",sans-serif;background:var(--bg);color:#22303C;padding-bottom:60px;-webkit-text-size-adjust:100%;}
+header{background:linear-gradient(110deg,var(--blue-dark),var(--blue));color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;}
+.logo{width:44px;height:44px;flex:none;}
+h1{font-size:17px;font-weight:700;}
+.sub{font-size:10.5px;color:var(--gold);letter-spacing:1.5px;margin-top:2px;}
+.tabnav{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--blue-dark);position:sticky;top:0;z-index:50;}
+.tab{padding:13px 6px;background:transparent;border:none;color:#9DB6CB;font-size:12.5px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;}
+.tab.active{color:#fff;border-bottom-color:var(--gold);background:rgba(255,255,255,.05);}
+.wrap{padding:14px;max-width:580px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+.section{background:#fff;border-radius:12px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,76,129,.06);overflow:hidden;}
+.sec-head{padding:13px 16px;border-bottom:1px solid var(--light);display:flex;align-items:center;justify-content:space-between;}
+.sec-head h2{font-size:14.5px;font-weight:700;color:var(--blue-dark);}
+.count{font-size:12px;color:var(--grey);font-weight:700;background:var(--light);padding:3px 10px;border-radius:11px;}
+.count.done{background:#D8EFE0;color:#1F7A45;}
+.today{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,76,129,.06);}
+.today .date{font-size:13px;color:var(--grey);}
+.today .alert{font-size:13.5px;margin-top:6px;color:var(--red);font-weight:700;line-height:1.5;}
+.today .alert.ok{color:var(--green);}
+.list{padding:6px 16px;}
+.task{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid #F4F8FC;}
+.task:last-child{border-bottom:none;}
+.check{width:24px;height:24px;border-radius:6px;border:2px solid #C5D2DE;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;}
+.check.on{background:var(--green);border-color:var(--green);}
+.check.on::after{content:'✓';color:#fff;font-size:14px;font-weight:700;}
+.task .name{flex:1;font-size:14.5px;display:flex;align-items:center;flex-wrap:wrap;gap:5px;line-height:1.4;}
+.task.done .name{color:#9AA7B2;text-decoration:line-through;}
+.cat{font-size:10.5px;padding:2px 8px;border-radius:9px;font-weight:700;}
+.cat-工作{background:#FCE9CB;color:var(--gold-dark);}
+.cat-私人{background:#DCECF8;color:var(--blue-dark);}
+.cat-會務{background:#D8EFE0;color:#1F7A45;}
+.freq{font-size:10.5px;color:var(--grey);background:var(--light);padding:2px 7px;border-radius:8px;}
+.del{background:transparent;border:none;color:#9AA7B2;font-size:18px;cursor:pointer;padding:4px 8px;line-height:1;}
+.del:hover{color:var(--red);}
+.add-row{padding:11px 16px;border-top:1px solid var(--light);background:#FAFCFE;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.add-row input{flex:1;min-width:140px;padding:9px 11px;border:1px solid #D1DCE6;border-radius:7px;font-size:14px;font-family:inherit;}
+.add-row select{padding:9px 6px;border:1px solid #D1DCE6;border-radius:7px;font-size:12.5px;font-family:inherit;background:#fff;}
+.add-row button{padding:9px 14px;background:var(--gold);color:#3a2a06;border:none;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;}
+.add-row button:active{background:var(--gold-dark);color:#fff;}
+.empty{text-align:center;color:#9AA7B2;padding:18px 0;font-size:13px;}
+.alert-row{display:flex;align-items:center;gap:9px;padding:10px 16px;border-bottom:1px solid #F4F8FC;}
+.alert-row:last-child{border-bottom:none;}
+.alert-row.done .alert-name{color:#9AA7B2;text-decoration:line-through;}
+.badge{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:9px;white-space:nowrap;flex:none;}
+.b-tracking{background:#DCECF8;color:var(--blue-dark);}
+.b-deadline{background:#FCE9CB;color:var(--gold-dark);}
+.b-payment{background:#FFE5E5;color:var(--red);}
+.alert-name{flex:1;font-size:13px;line-height:1.35;}
+.alert-name b{display:block;}
+.alert-name em{font-style:normal;font-size:11.5px;color:var(--grey);}
+.dt{font-size:11px;font-weight:700;text-align:right;flex:none;}
+.dt.over{color:var(--red);}.dt.today{color:var(--red);}.dt.soon{color:var(--gold-dark);}.dt.future{color:var(--grey);}
+.form-card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(15,76,129,.06);margin-bottom:14px;}
+.row{margin-bottom:13px;}
+label{display:block;font-size:12px;color:var(--grey);margin-bottom:6px;font-weight:600;}
+.req{color:var(--red);margin-left:2px;}
+input.in,select.in,textarea.in{width:100%;padding:11px 12px;border:1px solid #D1DCE6;border-radius:7px;font-size:15px;font-family:inherit;background:#FCFDFE;}
+textarea.in{min-height:60px;resize:vertical;}
+input.in:focus,select.in:focus,textarea.in:focus{outline:none;border-color:var(--blue);background:#fff;}
+input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
+.submit{width:100%;padding:14px;background:var(--gold);color:#3a2a06;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;}
+.submit:active{background:var(--gold-dark);color:#fff;}
+.submit:disabled{opacity:.5;cursor:wait;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.invoice-toggle{display:flex;align-items:center;gap:10px;padding:11px 12px;background:#FFF9EE;border:1px solid var(--gold);border-radius:7px;cursor:pointer;}
+.invoice-toggle input{width:18px;height:18px;cursor:pointer;}
+.invoice-toggle label{margin:0;font-size:14px;color:#3a2a06;font-weight:700;cursor:pointer;flex:1;}
+.fin-card{background:#FAFCFE;border:1px solid var(--light);border-radius:10px;padding:14px;margin-bottom:13px;}
+.fin-card .row:last-child{margin-bottom:0;}
+@media (max-width:480px){.grid2{grid-template-columns:1fr;gap:0;}.grid2 .row{margin-bottom:13px;}.tab{font-size:11.5px;padding:11px 4px;}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303C;color:#fff;padding:11px 18px;border-radius:24px;font-size:13px;z-index:100;opacity:0;transition:opacity .25s;pointer-events:none;font-weight:700;}
+.toast.show{opacity:1;}.toast.ok{background:var(--green);}.toast.err{background:var(--red);}
+</style>
+</head>
+<body>
+<header>
+<svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="bw" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0F4C81"/><stop offset="60%" stop-color="#4A90C9"/><stop offset="100%" stop-color="#B8D4EC"/></linearGradient>
+<linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F5BC5C"/><stop offset="100%" stop-color="#E89518"/></linearGradient>
+</defs>
+<path d="M28 78 Q22 50 42 30 Q35 45 38 78 Z" fill="url(#bw)" opacity="0.95"/>
+<path d="M38 78 Q34 55 50 38 Q44 52 48 78 Z" fill="url(#bw)" opacity="0.85"/>
+<path d="M48 78 Q46 58 56 45 Q54 60 56 78 Z" fill="url(#bw)" opacity="0.75"/>
+<path d="M50 38 Q65 32 90 18 L72 36 Q66 40 58 42 Q66 50 70 60 L55 50 Q50 65 46 78 Z" fill="url(#gd)"/>
+</svg>
+<div><h1>CHI-FEI 齊飛品牌行銷</h1><div class="sub">Project tracking</div></div>
+</header>
+<div class="tabnav">
+<button class="tab active" onclick="showTab('todo',this)">📋 每日待辦</button>
+<button class="tab" onclick="showTab('service',this)">📦 新增成交服務</button>
+<button class="tab" onclick="showTab('task',this)">✅ 新增 SOP 工作</button>
+</div>
+<div class="wrap">
+
+<div id="page-todo" class="page active">
+<div class="today">
+<div class="date" id="todayDate"></div>
+<div class="alert" id="todayAlert">載入中...</div>
+</div>
+
+<div class="section">
+<div class="sec-head"><h2>🌞 每日習慣</h2><span class="count" id="habitCount">0/0</span></div>
+<div class="list" id="habits"></div>
+<div class="add-row">
+<input id="habitInput" placeholder="新增每日習慣..." onkeydown="if(event.key==='Enter')addHabit()">
+<button onclick="addHabit()">＋</button>
+</div>
+</div>
+
+<div class="section">
+<div class="sec-head"><h2>📅 每週任務</h2><span class="count" id="weeklyCount">0/0</span></div>
+<div class="list" id="weekly"></div>
+<div class="add-row">
+<input id="weeklyInput" placeholder="新增每週任務..." onkeydown="if(event.key==='Enter')addWeekly()">
+<button onclick="addWeekly()">＋</button>
+</div>
+</div>
+
+<div class="section">
+<div class="sec-head"><h2>✅ 待辦事項</h2><span class="count" id="todoCount">0/0</span></div>
+<div class="list" id="todos"></div>
+<div class="add-row">
+<input id="todoInput" placeholder="新增待辦..." onkeydown="if(event.key==='Enter')addTodo()">
+<select id="todoCat"><option value="工作">工作</option><option value="私人">私人</option><option value="會務">會務</option></select>
+<select id="todoFreq"><option value="once">一次</option><option value="daily">每日</option><option value="weekly">每週</option></select>
+<button onclick="addTodo()">＋</button>
+</div>
+</div>
+
+<div class="section">
+<div class="sec-head"><h2>⚠️ 專案近期提醒</h2><span class="count" id="alertCount">—</span></div>
+<div class="list" id="projectAlerts"><div class="empty">讀取中...</div></div>
+</div>
+</div>
+
+<div id="page-service" class="page">
+<div class="form-card">
+<form onsubmit="addService(event)">
+<div class="row"><label>品牌客戶名稱<span class="req">*</span></label><input class="in" type="text" id="s_client" required placeholder="例：晨光咖啡"></div>
+<div class="row"><label>服務項目<span class="req">*</span></label><select class="in" id="s_item" required></select></div>
+<div class="grid2">
+<div class="row"><label>負責 PM<span class="req">*</span></label><select class="in" id="s_pm" required></select></div>
+<div class="row"><label>狀態</label><select class="in" id="s_status"></select></div>
+</div>
+<div class="grid2">
+<div class="row"><label>優先級</label><select class="in" id="s_priority"></select></div>
+<div class="row"><label>進行方式</label><select class="in" id="s_mode"></select></div>
+</div>
+<div class="grid2">
+<div class="row"><label>開始日</label><input class="in" type="date" id="s_start"></div>
+<div class="row"><label>結束日</label><input class="in" type="date" id="s_end"></div>
+</div>
+
+<div class="fin-card">
+<div class="row"><label>💰 總成交金額（NT$）<span class="req">*</span></label><input class="in" type="number" id="s_total" min="0" step="1000" inputmode="numeric" oninput="recalcUnpaid()"></div>
+<div class="grid2">
+<div class="row"><label>已收訂金（NT$）</label><input class="in" type="number" id="s_deposit" min="0" step="1000" inputmode="numeric" oninput="recalcUnpaid()"></div>
+<div class="row"><label>付款方式</label><select class="in" id="s_payment"><option value="一次付清">一次付清</option><option value="分兩期">分兩期</option><option value="分三期">分三期</option><option value="月付">月付</option><option value="其他">其他</option></select></div>
+</div>
+<div class="row"><label>未收款項（自動計算）</label><input class="in" type="text" id="s_unpaid" readonly value="NT$0"></div>
+<div class="row"><label>後續收款日期（到期會自動加進提醒）</label><input class="in" type="date" id="s_nextPay"></div>
+</div>
+
+<div class="row">
+<div class="invoice-toggle"><input type="checkbox" id="s_invoice"><label for="s_invoice">📄 此服務需開立發票（勾選後會自動建立「開立發票」待辦）</label></div>
+</div>
+
+<div class="row"><label>備註</label><textarea class="in" id="s_notes" placeholder="（可選）"></textarea></div>
+<button class="submit" type="submit">＋ 新增到「服務項目表」</button>
+</form>
+</div>
+</div>
+
+<div id="page-task" class="page">
+<div class="form-card">
+<form onsubmit="addTask(event)">
+<div class="row"><label>所屬服務<span class="req">*</span></label><select class="in" id="t_service" required></select></div>
+<div class="row"><label>工作項目<span class="req">*</span></label><input class="in" type="text" id="t_workItem" required placeholder="例：撰寫文章腳本"></div>
+<div class="grid2">
+<div class="row"><label>負責人<span class="req">*</span></label><select class="in" id="t_assignee" required></select></div>
+<div class="row"><label>優先級</label><select class="in" id="t_priority"></select></div>
+</div>
+<div class="row"><label>備註</label><textarea class="in" id="t_notes" placeholder="（可選）"></textarea></div>
+<button class="submit" type="submit">＋ 新增到「SOP 工作明細」</button>
+</form>
+</div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzBG6ZIicvroAH8c7k11d_Hg252jK7Zom4h5D-SsJNnjvuVJLRd80_YrwLYo-wj4X9V/exec';
+const SHEET_ID='1VE9a4J8R7PkuzvyLuQSYDTZTV9aaMHjA4VGpwIrFR9M';
+const KEY='cifei_todos_v3';
+const today=new Date();today.setHours(0,0,0,0);
+let opts={pm:[],items:[],status:[],priority:[],mode:[]};
+let services=[];
+let cloudAlerts=[];
+
+function $(s){return document.querySelector(s);}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function weekKey(){const d=new Date();d.setHours(0,0,0,0);const day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d.getFullYear()+'-W'+d.getMonth()+'-'+d.getDate();}
+function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY))||{};return Object.assign({habits:[],weekly:[],todos:[],alertState:{},payments:[]},s);}catch(e){return{habits:[],weekly:[],todos:[],alertState:{},payments:[]};}}
+function saveStore(s){localStorage.setItem(KEY,JSON.stringify(s));}
+function parseDate(v){if(!v)return null;if(v instanceof Date)return v;if(typeof v==='string'&&v.startsWith('Date(')){const p=v.slice(5,-1).split(',').map(Number);return new Date(p[0],p[1],p[2]);}const d=new Date(v);return isNaN(d)?null:d;}
+function fmtRelDate(diff){if(diff<0)return{txt:'逾期 '+Math.abs(diff)+' 天',cls:'over'};if(diff===0)return{txt:'今天',cls:'today'};if(diff<=7)return{txt:diff+' 天後',cls:'soon'};return{txt:diff+' 天後',cls:'future'};}
+function fmtM(n){return'NT$'+(Number(n)||0).toLocaleString();}
+
+function showTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('#page-'+name).classList.add('active');
+}
+
+function showTodayDate(){
+  const wd=['日','一','二','三','四','五','六'];
+  $('#todayDate').textContent=today.getFullYear()+' 年 '+(today.getMonth()+1)+' 月 '+today.getDate()+' 日（週'+wd[today.getDay()]+'）';
+}
+
+// ----- Habits -----
+function addHabit(){const i=$('#habitInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.habits.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderHabits();updateAlert();}
+function toggleHabit(id){const s=loadStore();const h=s.habits.find(h=>h.id===id);const k=todayKey();h.done[k]=!h.done[k];saveStore(s);renderHabits();updateAlert();}
+function delHabit(id){if(!confirm('確定刪除這個習慣？'))return;const s=loadStore();s.habits=s.habits.filter(h=>h.id!==id);saveStore(s);renderHabits();updateAlert();}
+function renderHabits(){
+  const s=loadStore();const k=todayKey();
+  $('#habits').innerHTML=s.habits.length?s.habits.map(h=>{const on=!!h.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleHabit(${h.id})"></div><div class="name">${h.name}</div><button class="del" onclick="delHabit(${h.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每日習慣</div>';
+  const t=s.habits.length,d=s.habits.filter(h=>h.done[k]).length;
+  const c=$('#habitCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
+}
+
+// ----- Weekly -----
+function addWeekly(){const i=$('#weeklyInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.weekly.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderWeekly();updateAlert();}
+function toggleWeekly(id){const s=loadStore();const w=s.weekly.find(w=>w.id===id);const k=weekKey();w.done[k]=!w.done[k];saveStore(s);renderWeekly();updateAlert();}
+function delWeekly(id){if(!confirm('確定刪除這個每週任務？'))return;const s=loadStore();s.weekly=s.weekly.filter(w=>w.id!==id);saveStore(s);renderWeekly();updateAlert();}
+function renderWeekly(){
+  const s=loadStore();const k=weekKey();
+  $('#weekly').innerHTML=s.weekly.length?s.weekly.map(w=>{const on=!!w.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleWeekly(${w.id})"></div><div class="name">${w.name}</div><button class="del" onclick="delWeekly(${w.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每週任務</div>';
+  const t=s.weekly.length,d=s.weekly.filter(w=>w.done[k]).length;
+  const c=$('#weeklyCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
+}
+
+// ----- Todos (with category) -----
+function addTodo(){const i=$('#todoInput');const n=i.value.trim();if(!n)return;const cat=$('#todoCat').value;const f=$('#todoFreq').value;const s=loadStore();s.todos.push({id:Date.now(),name:n,cat:cat,freq:f,done:{}});saveStore(s);i.value='';renderTodos();updateAlert();}
+function toggleTodo(id){const s=loadStore();const t=s.todos.find(t=>t.id===id);const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');t.done[k]=!t.done[k];if(t.freq==='once'&&t.done[k]){s.todos=s.todos.filter(x=>x.id!==id);}saveStore(s);renderTodos();updateAlert();}
+function delTodo(id){if(!confirm('確定刪除這個待辦？'))return;const s=loadStore();s.todos=s.todos.filter(t=>t.id!==id);saveStore(s);renderTodos();updateAlert();}
+function renderTodos(){
+  const s=loadStore();
+  const ord={'工作':1,'會務':2,'私人':3};
+  const sorted=s.todos.slice().sort((a,b)=>(ord[a.cat]||9)-(ord[b.cat]||9));
+  $('#todos').innerHTML=sorted.length?sorted.map(t=>{const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');const on=!!t.done[k];const cat=t.cat||'工作';const fl={once:'一次',daily:'每日',weekly:'每週'}[t.freq]||'';return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleTodo(${t.id})"></div><div class="name"><span class="cat cat-${cat}">${cat}</span><span class="freq">${fl}</span>${t.name}</div><button class="del" onclick="delTodo(${t.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增待辦事項（可選分類：工作/私人/會務）</div>';
+  const tot=s.todos.length,dn=s.todos.filter(t=>{const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');return t.done[k];}).length;
+  const c=$('#todoCount');c.textContent=dn+'/'+tot;c.className='count'+(tot&&dn===tot?' done':'');
+}
+
+// ----- Project alerts (cloud + manual payments) -----
+function loadSheet(name){
+  return new Promise((resolve,reject)=>{
+    const cb='_gv'+Math.random().toString(36).slice(2,9);
+    let done=false;
+    window[cb]=(data)=>{done=true;delete window[cb];try{document.head.removeChild(s);}catch(e){}resolve(data);};
+    const s=document.createElement('script');
+    s.onerror=()=>{if(!done){delete window[cb];reject(new Error('載入失敗:'+name));}};
+    s.src=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(name)}&range=A2:Z2000&headers=1`;
+    document.head.appendChild(s);
+    setTimeout(()=>{if(!done){delete window[cb];try{document.head.removeChild(s);}catch(e){}reject(new Error('逾時:'+name));}},15000);
+  });
+}
+function tableToRows(t){if(!t||!t.table||!t.table.cols||!t.table.rows)return[];const cols=t.table.cols.map(c=>(c.label||c.id||'').replace(/\s+/g,''));return t.table.rows.map(r=>{const o={};(r.c||[]).forEach((c,i)=>{o[cols[i]||('c'+i)]=c?(c.v!==undefined?c.v:c.f):'';});return o;});}
+
+async function loadCloudAlerts(){
+  try{
+    const [proj,svc]=await Promise.all([loadSheet('專案總表'),loadSheet('服務項目表')]);
+    const clients=tableToRows(proj).filter(r=>r['品牌客戶名稱(專案名稱)']);
+    const svcs=tableToRows(svc).filter(r=>r['服務編號']&&r['所屬客戶']);
+    const a=[];
+    clients.forEach(c=>{if(c['整體狀態']==='結案')return;const fu=parseDate(c['下次跟進日期']);if(!fu)return;const diff=Math.round((fu-today)/864e5);if(diff<=7)a.push({key:'cli:'+c['客戶編號']+':'+(c['下次跟進日期']||''),type:'客戶跟進',badge:'b-tracking',name:c['品牌客戶名稱(專案名稱)'],sub:'',date:fu,diff:diff});});
+    svcs.forEach(s=>{if(s['服務狀態']==='結案'||s['服務狀態']==='已完成')return;const ed=parseDate(s['服務結束日']);if(!ed)return;const diff=Math.round((ed-today)/864e5);if(diff<=14)a.push({key:'svc:'+s['服務編號']+':'+(s['服務結束日']||''),type:'服務到期',badge:'b-deadline',name:s['所屬客戶'],sub:s['服務項目']+'（'+s['服務編號']+'）',date:ed,diff:diff});});
+    cloudAlerts=a;
+    renderAlerts();
+  }catch(e){$('#projectAlerts').innerHTML='<div class="empty">讀取失敗：'+e.message+'</div>';}
+}
+
+function renderAlerts(){
+  const s=loadStore();
+  const items=[];
+  cloudAlerts.forEach(a=>{const st=s.alertState[a.key]||{};if(st.dismissed)return;items.push(Object.assign({},a,{done:!!st.done}));});
+  s.payments.forEach(p=>{const d=parseDate(p.date);if(!d)return;const diff=Math.round((d-today)/864e5);if(diff>30&&!p.paid)return;items.push({key:'pay:'+p.id,type:'收款提醒',badge:'b-payment',name:p.client,sub:p.item+' · 應收 '+fmtM(p.amount),date:d,diff:diff,paymentId:p.id,done:!!p.paid});});
+  items.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return a.date-b.date;});
+  const undone=items.filter(i=>!i.done).length;
+  $('#alertCount').textContent=undone+'/'+items.length+' 件';
+  $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:`onclick="toggleCloudAlert('${a.key}')"`;const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${a.name}</b>${a.sub?'<em>'+a.sub+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div><button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
+}
+
+function toggleCloudAlert(key){const s=loadStore();s.alertState[key]=s.alertState[key]||{};s.alertState[key].done=!s.alertState[key].done;saveStore(s);renderAlerts();updateAlert();}
+function dismissAlert(key){if(!confirm('確定移除這個提醒？'))return;const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);renderAlerts();updateAlert();}
+function togglePayment(id){const s=loadStore();const p=s.payments.find(p=>p.id===id);if(p)p.paid=!p.paid;saveStore(s);renderAlerts();updateAlert();}
+function delPayment(id){if(!confirm('確定刪除這個收款提醒？'))return;const s=loadStore();s.payments=s.payments.filter(p=>p.id!==id);saveStore(s);renderAlerts();updateAlert();}
+
+function updateAlert(){
+  const s=loadStore();const k=todayKey(),wk=weekKey();
+  const h=s.habits.filter(h=>!h.done[k]).length;
+  const w=s.weekly.filter(w=>!w.done[wk]).length;
+  const t=s.todos.filter(t=>{const kk=t.freq==='weekly'?wk:(t.freq==='daily'?k:'_one');return !t.done[kk];}).length;
+  const p=s.payments.filter(p=>{if(p.paid)return false;const d=parseDate(p.date);if(!d)return false;return Math.round((d-today)/864e5)<=7;}).length;
+  const cd=cloudAlerts.filter(a=>{if(s.alertState[a.key]&&s.alertState[a.key].done)return false;return a.diff<=7;}).length;
+  const parts=[];if(h)parts.push(h+' 個習慣');if(w)parts.push(w+' 個每週任務');if(t)parts.push(t+' 個待辦');if(cd+p)parts.push((cd+p)+' 個近期專案提醒');
+  const el=$('#todayAlert');
+  if(parts.length){el.textContent='⚠️ 未完成：'+parts.join('、');el.className='alert';}else{el.textContent='✅ 今日待辦全部完成，做得好！';el.className='alert ok';}
+}
+// ----- Service & Task forms -----
+async function loadOptions(){
+  try{
+    const r=await fetch(SCRIPT_URL+'?list=options');const d=await r.json();
+    if(d.ok){opts=d;populateOptions();}
+    const r2=await fetch(SCRIPT_URL+'?list=services');const d2=await r2.json();
+    if(d2.ok){services=d2.services||[];populateServices();}
+  }catch(e){showToast('載入選項失敗：'+e.message,'err');}
+}
+
+function populateOptions(){
+  const clean=arr=>(arr||[]).filter(x=>x&&!String(x).startsWith('※'));
+  const pm=clean(opts.pm);
+  // Expand Google商家 into 3-month / 6-month options
+  let items=clean(opts.items);
+  const expanded=[];
+  items.forEach(it=>{if(/Google\s*商家/.test(it)){expanded.push(it+'（三個月）');expanded.push(it+'（六個月）');}else{expanded.push(it);}});
+  fillSel('s_item',expanded);
+  fillSel('s_pm',pm);
+  fillSel('s_status',clean(opts.status),'進行中');
+  fillSel('s_priority',clean(opts.priority),'中');
+  fillSel('s_mode',clean(opts.mode),'同時進行');
+  fillSel('t_assignee',pm);
+  fillSel('t_priority',clean(opts.priority),'中');
+}
+
+function populateServices(){
+  const sel=$('#t_service');
+  if(!services.length){sel.innerHTML='<option value="">（尚無進行中的服務）</option>';return;}
+  sel.innerHTML=services.map(s=>`<option value="${s.sid}">${s.sid}　${s.client} · ${s.item}</option>`).join('');
+}
+
+function fillSel(id,list,def){
+  const sel=$('#'+id);if(!list||!list.length){sel.innerHTML='<option value="">（無選項）</option>';return;}
+  sel.innerHTML=list.map(x=>`<option value="${x}"${def===x?' selected':''}>${x}</option>`).join('');
+}
+
+function recalcUnpaid(){
+  const tot=Number($('#s_total').value)||0;
+  const dep=Number($('#s_deposit').value)||0;
+  const unpaid=Math.max(0,tot-dep);
+  $('#s_unpaid').value='NT$'+unpaid.toLocaleString();
+}
+
+async function addService(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.submit');const orig=btn.textContent;
+  btn.disabled=true;btn.textContent='新增中...';
+  const total=Number(g('s_total'))||0;
+  const deposit=Number(g('s_deposit'))||0;
+  const unpaid=Math.max(0,total-deposit);
+  const payment=g('s_payment');
+  const nextPay=g('s_nextPay');
+  const invoice=$('#s_invoice').checked;
+  const notesArr=[];
+  if(payment)notesArr.push('付款方式：'+payment);
+  if(deposit)notesArr.push('已收訂金 NT$'+deposit.toLocaleString());
+  if(unpaid)notesArr.push('未收 NT$'+unpaid.toLocaleString());
+  if(nextPay)notesArr.push('下次收款 '+nextPay);
+  notesArr.push('發票：'+(invoice?'是':'否'));
+  const extraNotes=g('s_notes');if(extraNotes)notesArr.push(extraNotes);
+  const data={type:'service',client:g('s_client'),serviceItem:g('s_item'),pm:g('s_pm'),status:g('s_status'),priority:g('s_priority'),mode:g('s_mode'),startDate:g('s_start'),endDate:g('s_end'),amount:total,notes:notesArr.join('｜')};
+  try{
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error);
+    // Auto-add payment alert
+    if(nextPay&&unpaid>0){
+      const s=loadStore();
+      s.payments.push({id:Date.now(),sid:d.sid,client:data.client,item:data.serviceItem,amount:unpaid,date:nextPay,paid:false});
+      saveStore(s);
+    }
+    // Auto-add invoice todo
+    if(invoice){
+      const s=loadStore();
+      s.todos.push({id:Date.now()+1,name:data.client+' 開立發票（'+data.serviceItem+'）',cat:'工作',freq:'once',done:{}});
+      saveStore(s);
+      renderTodos();
+    }
+    services.push({sid:d.sid,client:data.client,item:data.serviceItem});
+    populateServices();
+    renderAlerts();updateAlert();
+    showToast('✓ 新增成功 '+d.sid+(invoice?' · 已建立發票待辦':''),'ok');
+    e.target.reset();$('#s_unpaid').value='NT$0';
+  }catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}
+}
+
+async function addTask(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.submit');const orig=btn.textContent;
+  btn.disabled=true;btn.textContent='新增中...';
+  const data={type:'task',serviceId:g('t_service'),workItem:g('t_workItem'),assignee:g('t_assignee'),priority:g('t_priority'),notes:g('t_notes')};
+  try{
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+    const d=await r.json();
+    if(d.ok){showToast('✓ 新增成功 '+d.tid,'ok');e.target.reset();}else throw new Error(d.error);
+  }catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}
+}
+
+function g(id){return $('#'+id).value.trim();}
+function showToast(msg,type){const t=$('#toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3000);}
+
+showTodayDate();
+renderHabits();
+renderWeekly();
+renderTodos();
+renderAlerts();
+updateAlert();
+loadCloudAlerts();
+loadOptions();
+</script>
+</body>
+</html>
