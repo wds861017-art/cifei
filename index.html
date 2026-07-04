@@ -12,15 +12,15 @@ header{background:linear-gradient(110deg,var(--blue-dark),var(--blue));color:#ff
 .logo{width:44px;height:44px;flex:none;}
 h1{font-size:17px;font-weight:700;}
 .sub{font-size:10.5px;color:var(--gold);letter-spacing:1.5px;margin-top:2px;}
-.tabnav{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--blue-dark);position:sticky;top:0;z-index:50;}
-.tab{padding:13px 6px;background:transparent;border:none;color:#9DB6CB;font-size:12.5px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;}
+.tabnav{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--blue-dark);position:sticky;top:0;z-index:50;}
+.tab{padding:13px 2px;background:transparent;border:none;color:#9DB6CB;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;}
 .tab.active{color:#fff;border-bottom-color:var(--gold);background:rgba(255,255,255,.05);}
 .wrap{padding:14px;max-width:580px;margin:0 auto;}
 .page{display:none;}
 .page.active{display:block;}
 .section{background:#fff;border-radius:12px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,76,129,.06);overflow:hidden;}
-.sec-head{padding:13px 16px;border-bottom:1px solid var(--light);display:flex;align-items:center;justify-content:space-between;}
-.sec-head h2{font-size:14.5px;font-weight:700;color:var(--blue-dark);}
+.sec-head{padding:13px 16px;border-bottom:1px solid var(--light);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.sec-head h2{font-size:14.5px;font-weight:700;color:var(--blue-dark);flex:1;}
 .count{font-size:12px;color:var(--grey);font-weight:700;background:var(--light);padding:3px 10px;border-radius:11px;}
 .count.done{background:#D8EFE0;color:#1F7A45;}
 .today{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,76,129,.06);}
@@ -77,7 +77,39 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 .invoice-toggle label{margin:0;font-size:14px;color:#3a2a06;font-weight:700;cursor:pointer;flex:1;}
 .fin-card{background:#FAFCFE;border:1px solid var(--light);border-radius:10px;padding:14px;margin-bottom:13px;}
 .fin-card .row:last-child{margin-bottom:0;}
-@media (max-width:480px){.grid2{grid-template-columns:1fr;gap:0;}.grid2 .row{margin-bottom:13px;}.tab{font-size:11.5px;padding:11px 4px;}}
+.svc-card{border:1px solid var(--light);border-radius:10px;margin:12px 16px;overflow:hidden;background:#fff;}
+.svc-card.warn{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+.svc-card.over{border-color:var(--red);box-shadow:0 0 0 1px var(--red);}
+.svc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:12px 14px 6px;}
+.svc-client{font-size:15px;font-weight:700;color:var(--blue-dark);}
+.svc-item{font-size:12px;color:var(--grey);margin-top:2px;line-height:1.4;}
+.svc-meta{font-size:12px;color:var(--grey);padding:2px 14px 8px;line-height:1.5;}
+.pbar{height:8px;background:var(--light);border-radius:4px;overflow:hidden;margin:2px 14px 6px;}
+.pbar>div{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:4px;}
+.svc-ctrl{display:flex;align-items:center;gap:8px;padding:4px 14px 12px;}
+.svc-ctrl label{margin:0;font-size:12px;flex:none;}
+.svc-ctrl select{flex:1;padding:8px;border:1px solid #D1DCE6;border-radius:7px;font-size:13.5px;font-family:inherit;background:#fff;}
+.sop-list{border-top:1px dashed #D1DCE6;background:#FAFCFE;padding:4px 14px;}
+.sop-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F0F5FA;}
+.sop-row:last-child{border-bottom:none;}
+.sop-name{flex:1;font-size:13.5px;line-height:1.35;}
+.sop-name em{font-style:normal;color:var(--grey);font-size:11px;margin-left:6px;}
+.sop-row.done .sop-name{color:#9AA7B2;text-decoration:line-through;}
+.prog-filters{padding:10px 16px;border-bottom:1px solid var(--light);display:flex;gap:6px;flex-wrap:wrap;}
+.pchip{padding:6px 14px;border-radius:15px;border:1px solid #D1DCE6;background:#fff;font-size:12px;font-weight:700;color:var(--grey);cursor:pointer;font-family:inherit;}
+.pchip.on{background:var(--blue-dark);color:#fff;border-color:var(--blue-dark);}
+.refresh{background:transparent;border:none;font-size:16px;cursor:pointer;padding:2px 6px;flex:none;}
+.mini-btn{padding:8px 10px;border:1px solid #D1DCE6;background:#fff;border-radius:7px;font-size:12px;font-weight:700;color:var(--blue-dark);cursor:pointer;font-family:inherit;flex:none;white-space:nowrap;}
+.mini-btn:active{background:var(--light);}
+.stat-row{display:flex;border-bottom:1px solid var(--light);}
+.stat{flex:1;text-align:center;padding:10px 4px;}
+.stat b{display:block;font-size:15px;color:var(--blue-dark);line-height:1.4;}
+.stat span{font-size:10.5px;color:var(--grey);}
+.stat b.warn{color:var(--gold-dark);}
+.stat b.bad{color:var(--red);}
+.stat b.good{color:var(--green);}
+.stat b.m{font-size:12px;line-height:1.9;}
+@media (max-width:480px){.grid2{grid-template-columns:1fr;gap:0;}.grid2 .row{margin-bottom:13px;}.tab{font-size:11px;padding:11px 2px;}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303C;color:#fff;padding:11px 18px;border-radius:24px;font-size:13px;z-index:100;opacity:0;transition:opacity .25s;pointer-events:none;font-weight:700;}
 .toast.show{opacity:1;}.toast.ok{background:var(--green);}.toast.err{background:var(--red);}
 </style>
@@ -98,17 +130,16 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 </header>
 <div class="tabnav">
 <button class="tab active" onclick="showTab('todo',this)">📋 每日待辦</button>
-<button class="tab" onclick="showTab('service',this)">📦 新增成交服務</button>
-<button class="tab" onclick="showTab('task',this)">✅ 新增 SOP 工作</button>
+<button class="tab" onclick="showTab('progress',this)">📊 專案進度</button>
+<button class="tab" onclick="showTab('service',this)">📦 新增服務</button>
+<button class="tab" onclick="showTab('task',this)">✅ 新增SOP</button>
 </div>
 <div class="wrap">
-
 <div id="page-todo" class="page active">
 <div class="today">
 <div class="date" id="todayDate"></div>
 <div class="alert" id="todayAlert">載入中...</div>
 </div>
-
 <div class="section">
 <div class="sec-head"><h2>🌞 每日習慣</h2><span class="count" id="habitCount">0/0</span></div>
 <div class="list" id="habits"></div>
@@ -117,7 +148,6 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <button onclick="addHabit()">＋</button>
 </div>
 </div>
-
 <div class="section">
 <div class="sec-head"><h2>📅 每週任務</h2><span class="count" id="weeklyCount">0/0</span></div>
 <div class="list" id="weekly"></div>
@@ -126,7 +156,6 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <button onclick="addWeekly()">＋</button>
 </div>
 </div>
-
 <div class="section">
 <div class="sec-head"><h2>✅ 待辦事項</h2><span class="count" id="todoCount">0/0</span></div>
 <div class="list" id="todos"></div>
@@ -137,13 +166,22 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <button onclick="addTodo()">＋</button>
 </div>
 </div>
-
 <div class="section">
 <div class="sec-head"><h2>⚠️ 專案近期提醒</h2><span class="count" id="alertCount">—</span></div>
 <div class="list" id="projectAlerts"><div class="empty">讀取中...</div></div>
 </div>
 </div>
-
+<div id="page-progress" class="page">
+<div class="section">
+<div class="sec-head"><h2>📊 專案進度</h2><button class="refresh" onclick="loadProgress(true)" title="重新整理">🔄</button><span class="count" id="progCount">—</span></div>
+<div class="stat-row" id="progStats"></div>
+<div class="prog-filters">
+<button class="pchip on" onclick="setProgFilter('active',this)">進行中</button>
+<button class="pchip" onclick="setProgFilter('all',this)">全部</button>
+</div>
+<div id="progList"><div class="empty">讀取中...</div></div>
+</div>
+</div>
 <div id="page-service" class="page">
 <div class="form-card">
 <form onsubmit="addService(event)">
@@ -161,7 +199,6 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <div class="row"><label>開始日</label><input class="in" type="date" id="s_start"></div>
 <div class="row"><label>結束日</label><input class="in" type="date" id="s_end"></div>
 </div>
-
 <div class="fin-card">
 <div class="row"><label>💰 總成交金額（NT$）<span class="req">*</span></label><input class="in" type="number" id="s_total" min="0" step="1000" inputmode="numeric" oninput="recalcUnpaid()"></div>
 <div class="grid2">
@@ -171,17 +208,14 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <div class="row"><label>未收款項（自動計算）</label><input class="in" type="text" id="s_unpaid" readonly value="NT$0"></div>
 <div class="row"><label>後續收款日期（到期會自動加進提醒）</label><input class="in" type="date" id="s_nextPay"></div>
 </div>
-
 <div class="row">
 <div class="invoice-toggle"><input type="checkbox" id="s_invoice"><label for="s_invoice">📄 此服務需開立發票（勾選後會自動建立「開立發票」待辦）</label></div>
 </div>
-
 <div class="row"><label>備註</label><textarea class="in" id="s_notes" placeholder="（可選）"></textarea></div>
 <button class="submit" type="submit">＋ 新增到「服務項目表」</button>
 </form>
 </div>
 </div>
-
 <div id="page-task" class="page">
 <div class="form-card">
 <form onsubmit="addTask(event)">
@@ -196,7 +230,6 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 </form>
 </div>
 </div>
-
 </div>
 <div class="toast" id="toast"></div>
 <script>
@@ -207,8 +240,10 @@ const today=new Date();today.setHours(0,0,0,0);
 let opts={pm:[],items:[],status:[],priority:[],mode:[]};
 let services=[];
 let cloudAlerts=[];
-
+let progServices=[],progTasks=[],progFilter='active';
+let cloudFin=[];
 function $(s){return document.querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
 function weekKey(){const d=new Date();d.setHours(0,0,0,0);const day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d.getFullYear()+'-W'+d.getMonth()+'-'+d.getDate();}
 function loadStore(){try{const s=JSON.parse(localStorage.getItem(KEY))||{};return Object.assign({habits:[],weekly:[],todos:[],alertState:{},payments:[]},s);}catch(e){return{habits:[],weekly:[],todos:[],alertState:{},payments:[]};}}
@@ -216,41 +251,38 @@ function saveStore(s){localStorage.setItem(KEY,JSON.stringify(s));}
 function parseDate(v){if(!v)return null;if(v instanceof Date)return v;if(typeof v==='string'&&v.startsWith('Date(')){const p=v.slice(5,-1).split(',').map(Number);return new Date(p[0],p[1],p[2]);}const d=new Date(v);return isNaN(d)?null:d;}
 function fmtRelDate(diff){if(diff<0)return{txt:'逾期 '+Math.abs(diff)+' 天',cls:'over'};if(diff===0)return{txt:'今天',cls:'today'};if(diff<=7)return{txt:diff+' 天後',cls:'soon'};return{txt:diff+' 天後',cls:'future'};}
 function fmtM(n){return'NT$'+(Number(n)||0).toLocaleString();}
-
+function toNum(v){return typeof v==='number'?v:(Number(String(v==null?'':v).replace(/[^0-9.\-]/g,''))||0);}
+function fmtD(d){return d?d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate():'—';}
 function showTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   $('#page-'+name).classList.add('active');
 }
-
 function showTodayDate(){
   const wd=['日','一','二','三','四','五','六'];
   $('#todayDate').textContent=today.getFullYear()+' 年 '+(today.getMonth()+1)+' 月 '+today.getDate()+' 日（週'+wd[today.getDay()]+'）';
 }
-
 // ----- Habits -----
 function addHabit(){const i=$('#habitInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.habits.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderHabits();updateAlert();}
 function toggleHabit(id){const s=loadStore();const h=s.habits.find(h=>h.id===id);const k=todayKey();h.done[k]=!h.done[k];saveStore(s);renderHabits();updateAlert();}
 function delHabit(id){if(!confirm('確定刪除這個習慣？'))return;const s=loadStore();s.habits=s.habits.filter(h=>h.id!==id);saveStore(s);renderHabits();updateAlert();}
 function renderHabits(){
   const s=loadStore();const k=todayKey();
-  $('#habits').innerHTML=s.habits.length?s.habits.map(h=>{const on=!!h.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleHabit(${h.id})"></div><div class="name">${h.name}</div><button class="del" onclick="delHabit(${h.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每日習慣</div>';
+  $('#habits').innerHTML=s.habits.length?s.habits.map(h=>{const on=!!h.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleHabit(${h.id})"></div><div class="name">${esc(h.name)}</div><button class="del" onclick="delHabit(${h.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每日習慣</div>';
   const t=s.habits.length,d=s.habits.filter(h=>h.done[k]).length;
   const c=$('#habitCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
 }
-
 // ----- Weekly -----
 function addWeekly(){const i=$('#weeklyInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.weekly.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderWeekly();updateAlert();}
 function toggleWeekly(id){const s=loadStore();const w=s.weekly.find(w=>w.id===id);const k=weekKey();w.done[k]=!w.done[k];saveStore(s);renderWeekly();updateAlert();}
 function delWeekly(id){if(!confirm('確定刪除這個每週任務？'))return;const s=loadStore();s.weekly=s.weekly.filter(w=>w.id!==id);saveStore(s);renderWeekly();updateAlert();}
 function renderWeekly(){
   const s=loadStore();const k=weekKey();
-  $('#weekly').innerHTML=s.weekly.length?s.weekly.map(w=>{const on=!!w.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleWeekly(${w.id})"></div><div class="name">${w.name}</div><button class="del" onclick="delWeekly(${w.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每週任務</div>';
+  $('#weekly').innerHTML=s.weekly.length?s.weekly.map(w=>{const on=!!w.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleWeekly(${w.id})"></div><div class="name">${esc(w.name)}</div><button class="del" onclick="delWeekly(${w.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每週任務</div>';
   const t=s.weekly.length,d=s.weekly.filter(w=>w.done[k]).length;
   const c=$('#weeklyCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
 }
-
 // ----- Todos (with category) -----
 function addTodo(){const i=$('#todoInput');const n=i.value.trim();if(!n)return;const cat=$('#todoCat').value;const f=$('#todoFreq').value;const s=loadStore();s.todos.push({id:Date.now(),name:n,cat:cat,freq:f,done:{}});saveStore(s);i.value='';renderTodos();updateAlert();}
 function toggleTodo(id){const s=loadStore();const t=s.todos.find(t=>t.id===id);const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');t.done[k]=!t.done[k];if(t.freq==='once'&&t.done[k]){s.todos=s.todos.filter(x=>x.id!==id);}saveStore(s);renderTodos();updateAlert();}
@@ -259,11 +291,10 @@ function renderTodos(){
   const s=loadStore();
   const ord={'工作':1,'會務':2,'私人':3};
   const sorted=s.todos.slice().sort((a,b)=>(ord[a.cat]||9)-(ord[b.cat]||9));
-  $('#todos').innerHTML=sorted.length?sorted.map(t=>{const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');const on=!!t.done[k];const cat=t.cat||'工作';const fl={once:'一次',daily:'每日',weekly:'每週'}[t.freq]||'';return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleTodo(${t.id})"></div><div class="name"><span class="cat cat-${cat}">${cat}</span><span class="freq">${fl}</span>${t.name}</div><button class="del" onclick="delTodo(${t.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增待辦事項（可選分類：工作/私人/會務）</div>';
+  $('#todos').innerHTML=sorted.length?sorted.map(t=>{const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');const on=!!t.done[k];const cat=t.cat||'工作';const fl={once:'一次',daily:'每日',weekly:'每週'}[t.freq]||'';return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleTodo(${t.id})"></div><div class="name"><span class="cat cat-${cat}">${cat}</span><span class="freq">${fl}</span>${esc(t.name)}</div><button class="del" onclick="delTodo(${t.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增待辦事項（可選分類：工作/私人/會務）</div>';
   const tot=s.todos.length,dn=s.todos.filter(t=>{const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');return t.done[k];}).length;
   const c=$('#todoCount');c.textContent=dn+'/'+tot;c.className='count'+(tot&&dn===tot?' done':'');
 }
-
 // ----- Project alerts (cloud + manual payments) -----
 function loadSheet(name){
   return new Promise((resolve,reject)=>{
@@ -278,20 +309,27 @@ function loadSheet(name){
   });
 }
 function tableToRows(t){if(!t||!t.table||!t.table.cols||!t.table.rows)return[];const cols=t.table.cols.map(c=>(c.label||c.id||'').replace(/\s+/g,''));return t.table.rows.map(r=>{const o={};(r.c||[]).forEach((c,i)=>{o[cols[i]||('c'+i)]=c?(c.v!==undefined?c.v:c.f):'';});return o;});}
-
 async function loadCloudAlerts(){
   try{
-    const [proj,svc]=await Promise.all([loadSheet('專案總表'),loadSheet('服務項目表')]);
+    const [proj,svc,fin]=await Promise.all([loadSheet('專案總表'),loadSheet('服務項目表'),loadSheet('財務追蹤')]);
     const clients=tableToRows(proj).filter(r=>r['品牌客戶名稱(專案名稱)']);
     const svcs=tableToRows(svc).filter(r=>r['服務編號']&&r['所屬客戶']);
     const a=[];
     clients.forEach(c=>{if(c['整體狀態']==='結案')return;const fu=parseDate(c['下次跟進日期']);if(!fu)return;const diff=Math.round((fu-today)/864e5);if(diff<=7)a.push({key:'cli:'+c['客戶編號']+':'+(c['下次跟進日期']||''),type:'客戶跟進',badge:'b-tracking',name:c['品牌客戶名稱(專案名稱)'],sub:'',date:fu,diff:diff});});
     svcs.forEach(s=>{if(s['服務狀態']==='結案'||s['服務狀態']==='已完成')return;const ed=parseDate(s['服務結束日']);if(!ed)return;const diff=Math.round((ed-today)/864e5);if(diff<=14)a.push({key:'svc:'+s['服務編號']+':'+(s['服務結束日']||''),type:'服務到期',badge:'b-deadline',name:s['所屬客戶'],sub:s['服務項目']+'（'+s['服務編號']+'）',date:ed,diff:diff});});
+    cloudFin=tableToRows(fin).filter(r=>/^S\d/.test(String(r['服務編號']||'').trim()));
+    cloudFin.forEach(f=>{
+      const owed=toNum(f['未收金額']);
+      const nd=parseDate(f['下次收款日']);
+      if(owed<=0||!nd)return;
+      const inst=toNum(f['下次收款金額'])||owed;
+      const diff=Math.round((nd-today)/864e5);
+      if(diff<=30)a.push({key:'fpay:'+String(f['服務編號']).trim()+':'+(f['下次收款日']||''),type:'收款提醒',badge:'b-payment',name:f['所屬客戶'],sub:f['服務項目']+' · 應收 '+fmtM(inst),date:nd,diff:diff,sid:String(f['服務編號']).trim(),amount:inst});
+    });
     cloudAlerts=a;
-    renderAlerts();
-  }catch(e){$('#projectAlerts').innerHTML='<div class="empty">讀取失敗：'+e.message+'</div>';}
+    renderAlerts();renderProgress();
+  }catch(e){$('#projectAlerts').innerHTML='<div class="empty">讀取失敗：'+esc(e.message)+'</div>';}
 }
-
 function renderAlerts(){
   const s=loadStore();
   const items=[];
@@ -300,14 +338,12 @@ function renderAlerts(){
   items.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return a.date-b.date;});
   const undone=items.filter(i=>!i.done).length;
   $('#alertCount').textContent=undone+'/'+items.length+' 件';
-  $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:`onclick="toggleCloudAlert('${a.key}')"`;const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${a.name}</b>${a.sub?'<em>'+a.sub+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div><button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
+  $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const isFpay=!isPay&&String(a.key).indexOf('fpay:')===0;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:(isFpay?`onclick="confirmPayment('${a.sid}',${a.amount},'${a.key}')"`:`onclick="toggleCloudAlert('${a.key}')"`);const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${esc(a.name)}</b>${a.sub?'<em>'+esc(a.sub)+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div><button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
 }
-
 function toggleCloudAlert(key){const s=loadStore();s.alertState[key]=s.alertState[key]||{};s.alertState[key].done=!s.alertState[key].done;saveStore(s);renderAlerts();updateAlert();}
 function dismissAlert(key){if(!confirm('確定移除這個提醒？'))return;const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);renderAlerts();updateAlert();}
 function togglePayment(id){const s=loadStore();const p=s.payments.find(p=>p.id===id);if(p)p.paid=!p.paid;saveStore(s);renderAlerts();updateAlert();}
 function delPayment(id){if(!confirm('確定刪除這個收款提醒？'))return;const s=loadStore();s.payments=s.payments.filter(p=>p.id!==id);saveStore(s);renderAlerts();updateAlert();}
-
 function updateAlert(){
   const s=loadStore();const k=todayKey(),wk=weekKey();
   const h=s.habits.filter(h=>!h.done[k]).length;
@@ -319,6 +355,175 @@ function updateAlert(){
   const el=$('#todayAlert');
   if(parts.length){el.textContent='⚠️ 未完成：'+parts.join('、');el.className='alert';}else{el.textContent='✅ 今日待辦全部完成，做得好！';el.className='alert ok';}
 }
+// ----- Progress page (服務進度 + SOP 勾選，寫回 Sheets) -----
+function setProgFilter(f,btn){progFilter=f;document.querySelectorAll('.pchip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderProgress();}
+async function loadProgress(manual){
+  try{
+    const [svc,sop]=await Promise.all([loadSheet('服務項目表'),loadSheet('SOP工作明細')]);
+    progServices=tableToRows(svc).filter(r=>/^S\d/.test(String(r['服務編號']||'').trim()));
+    progTasks=tableToRows(sop).filter(r=>/^T\d/.test(String(r['工作編號']||'').trim()));
+    renderProgress();
+    if(manual)showToast('✓ 進度已更新','ok');
+  }catch(e){$('#progList').innerHTML='<div class="empty">讀取失敗：'+esc(e.message)+'</div>';}
+}
+function taskRowsFor(sid){return progTasks.filter(t=>String(t['所屬服務編號']||'').trim()===sid);}
+function pctOf(r,tasks){
+  if(tasks.length){const d=tasks.filter(t=>String(t['狀態'])==='已完成').length;return Math.round(d/tasks.length*100);}
+  let v=r['完成進度%'];
+  if(v===''||v==null)return null;
+  if(typeof v==='number')return Math.round(v<=1?v*100:v);
+  const n=Number(String(v).replace('%',''));
+  return isNaN(n)?null:Math.round(n);
+}
+function isActiveSt(st){return!(st==='結案'||st==='已完成');}
+function renderProgress(){
+  const list=$('#progList');
+  if(!progServices.length){list.innerHTML='<div class="empty">尚無服務資料</div>';$('#progCount').textContent='0 件';return;}
+  let rows=progServices.slice();
+  const act=rows.filter(r=>isActiveSt(String(r['服務狀態']||'')));
+  $('#progCount').textContent=act.length+' 件進行中';
+  if(progFilter==='active')rows=act;
+  rows.sort((a,b)=>{
+    const aa=isActiveSt(String(a['服務狀態']||'')),bb=isActiveSt(String(b['服務狀態']||''));
+    if(aa!==bb)return aa?-1:1;
+    const da=parseDate(a['服務結束日'])||new Date(9999,0,1),db=parseDate(b['服務結束日'])||new Date(9999,0,1);
+    return da-db;
+  });
+  const stOpts=((opts.status&&opts.status.length)?opts.status:['未開始','進行中','已完成','結案']).filter(x=>x&&!String(x).startsWith('※'));
+  list.innerHTML=rows.map(r=>{
+    const sid=String(r['服務編號']).trim();
+    const st=String(r['服務狀態']||'');
+    const active=isActiveSt(st);
+    const ed=parseDate(r['服務結束日']),sd=parseDate(r['服務起始日']);
+    const diff=ed?Math.round((ed-today)/864e5):null;
+    let cls='',dtxt='';
+    if(active&&diff!==null){
+      const rel=fmtRelDate(diff);
+      dtxt=`<span class="dt ${rel.cls}">${diff<0?'逾期 '+Math.abs(diff)+' 天':(diff===0?'今天到期':'剩 '+diff+' 天')}</span>`;
+      if(diff<0)cls='over';else if(diff<=14)cls='warn';
+    }
+    const tasks=taskRowsFor(sid);
+    const pct=pctOf(r,tasks);
+    const doneN=tasks.filter(t=>String(t['狀態'])==='已完成').length;
+    const amt=(typeof r['服務金額']==='number')?fmtM(r['服務金額']):(r['服務金額']||'—');
+    const fin=cloudFin.find(f=>String(f['服務編號']).trim()===sid);
+    const cAmt=fin?toNum(fin['合約金額']):0;
+    const pAmt=fin?toNum(fin['已收金額']):0;
+    const oAmt=fin?toNum(fin['未收金額']):0;
+    let finLine;
+    if(cAmt||pAmt||oAmt){finLine=`💰 已收 ${fmtM(pAmt)}｜${oAmt>0?`<b style="color:var(--red)">應收 ${fmtM(oAmt)}</b>`:`<b style="color:var(--green)">已收清 ✓</b>`}`;}
+    else if(!fin&&r['服務金額']){finLine=`💰 ${esc(String(amt))}`;}
+    else{finLine='💰 —（金額併入其他項目）';}
+    const inList=stOpts.includes(st);
+    const selHtml=`<select onchange="updateSvcStatus('${sid}',this)">${stOpts.map(o=>`<option${o===st?' selected':''}>${esc(o)}</option>`).join('')}${(inList||!st)?'':`<option selected>${esc(st)}</option>`}</select>`;
+    const done=(st==='已完成'||st==='結案');
+    return `<div class="svc-card ${cls}">
+<div class="svc-top"><div class="check ${done?'on':''}" onclick="toggleSvcDone('${sid}')" title="一鍵完成"></div><div style="flex:1"><div class="svc-client">${esc(r['所屬客戶']||'')}</div><div class="svc-item">${esc(r['服務項目']||'')}｜${sid}｜PM：${esc(r['負責PM']||'—')}</div></div>${dtxt}</div>
+<div class="svc-meta">${finLine}</div>
+<div class="svc-meta">📅 ${fmtD(sd)} ～ ${fmtD(ed)}</div>
+${pct===null?'':`<div class="pbar"><div style="width:${pct}%"></div></div>`}
+<div class="svc-ctrl"><label>狀態</label>${selHtml}<button class="mini-btn" onclick="renewService('${sid}')">🔁 續約</button><button class="mini-btn" onclick="setPayReminder('${sid}')">💰 收款</button></div>
+</div>`;
+  }).join('')||'<div class="empty">沒有符合的服務</div>';
+  renderStats();
+}
+async function updateSvcStatus(sid,sel){
+  const val=sel.value;sel.disabled=true;
+  try{
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateService',sid:sid,status:val})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    const row=progServices.find(s=>String(s['服務編號']).trim()===sid);
+    if(row)row['服務狀態']=val;
+    showToast('✓ '+sid+' 狀態 → '+val,'ok');
+    renderProgress();
+  }catch(e){showToast('更新失敗：'+e.message,'err');renderProgress();}
+}
+async function toggleSvcDone(sid){
+  const row=progServices.find(s=>String(s['服務編號']).trim()===sid);
+  if(!row)return;
+  const old=String(row['服務狀態']||'');
+  const nw=(old==='已完成'||old==='結案')?'進行中':'已完成';
+  const tasks=taskRowsFor(sid);
+  const oldTaskSt=tasks.map(t=>String(t['狀態']||''));
+  row['服務狀態']=nw;tasks.forEach(t=>t['狀態']=nw==='已完成'?'已完成':'進行中');
+  renderProgress();
+  try{
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'completeService',sid:sid,status:nw})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    showToast('✓ '+sid+' → '+nw,'ok');
+  }catch(e){
+    row['服務狀態']=old;tasks.forEach((t,i)=>t['狀態']=oldTaskSt[i]);
+    renderProgress();showToast('更新失敗：'+e.message,'err');
+  }
+}
+// 統計列：進行中 / 本月到期（含逾期）/ 未收總額
+function renderStats(){
+  const el=$('#progStats');if(!el)return;
+  const act=progServices.filter(r=>isActiveSt(String(r['服務狀態']||'')));
+  let due=0,over=0;
+  const eom=new Date(today.getFullYear(),today.getMonth()+1,0);
+  act.forEach(r=>{const ed=parseDate(r['服務結束日']);if(!ed)return;if(ed<today)over++;else if(ed<=eom)due++;});
+  const owed=cloudFin.reduce((s,f)=>s+toNum(f['未收金額']),0);
+  const paidT=cloudFin.reduce((s,f)=>s+toNum(f['已收金額']),0);
+  el.innerHTML=`<div class="stat"><b>${act.length}</b><span>進行中</span></div><div class="stat"><b class="${(due+over)?'warn':''}">${due+over}${over?'（逾 '+over+'）':''}</b><span>本月到期</span></div><div class="stat"><b class="good m">${fmtM(paidT)}</b><span>已收總額</span></div><div class="stat"><b class="${owed?'bad':''} m">${fmtM(owed)}</b><span>應收總額</span></div>`;
+}
+// 收款一鍵回寫：確認已收 → 財務追蹤已收金額累加、清除下次收款日/金額
+async function confirmPayment(sid,amount,key){
+  if(!confirm('確認已收到 '+fmtM(amount)+'？\n將寫回財務追蹤（已收金額 +'+fmtM(amount)+'，並清除下次收款日）'))return;
+  try{
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'confirmPayment',sid:sid,amount:amount})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);
+    showToast('✓ '+sid+' 已入帳 '+fmtM(amount),'ok');
+    loadCloudAlerts();
+  }catch(e){showToast('回寫失敗：'+e.message,'err');}
+}
+function fmtInputDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// 續約：帶入舊服務資料到新增服務表單（新 S 編號、起始日=舊結束日+1）
+function renewService(sid){
+  const r=progServices.find(s=>String(s['服務編號']).trim()===sid);
+  if(!r)return;
+  $('#s_client').value=r['所屬客戶']||'';
+  const item=String(r['服務項目']||'');
+  const sel=$('#s_item');
+  if(item&&!Array.from(sel.options).some(o=>o.value===item)){const o=document.createElement('option');o.value=item;o.textContent=item;sel.appendChild(o);}
+  if(item)sel.value=item;
+  const pm=String(r['負責PM']||'');if(pm&&Array.from($('#s_pm').options).some(o=>o.value===pm))$('#s_pm').value=pm;
+  const pr=String(r['優先級']||'');if(pr&&Array.from($('#s_priority').options).some(o=>o.value===pr))$('#s_priority').value=pr;
+  const md=String(r['進行方式']||'');if(md&&Array.from($('#s_mode').options).some(o=>o.value===md))$('#s_mode').value=md;
+  const ed=parseDate(r['服務結束日']);
+  $('#s_start').value=ed?fmtInputDate(new Date(ed.getTime()+864e5)):'';
+  $('#s_end').value='';$('#s_total').value='';$('#s_deposit').value='';$('#s_nextPay').value='';recalcUnpaid();
+  $('#s_invoice').checked=false;
+  $('#s_notes').value='續約自 '+sid;
+  showTab('service',document.querySelectorAll('.tab')[2]);
+  window.scrollTo(0,0);
+  showToast('已帶入「'+(r['所屬客戶']||'')+'」續約資料，請填金額與結束日','ok');
+}
+// 收款：直接為此服務設定「下次收款日/金額」（寫財務追蹤 O/P，例：舊期尾款）
+async function setPayReminder(sid){
+  const r=progServices.find(s=>String(s['服務編號']).trim()===sid);
+  const fin=cloudFin.find(f=>String(f['服務編號']).trim()===sid);
+  const owed=fin?toNum(fin['未收金額']):0;
+  const ed=parseDate(r&&r['服務結束日']);
+  const date=prompt('收款日期（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
+  if(!date)return;
+  if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
+  const amt=prompt('應收金額（NT$）'+(owed>0?'，目前應收 '+fmtM(owed):''),owed>0?String(owed):'');
+  if(amt===null)return;
+  const n=toNum(amt);
+  if(n<=0){showToast('金額需大於 0','err');return;}
+  try{
+    const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateNextPay',sid:sid,date:date.trim(),amount:n})});
+    const d=await rp.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    showToast('✓ '+sid+' 收款提醒已設定 '+date.trim()+' '+fmtM(n),'ok');
+    loadCloudAlerts();
+  }catch(e){showToast('設定失敗：'+e.message,'err');}
+}
 // ----- Service & Task forms -----
 async function loadOptions(){
   try{
@@ -328,7 +533,6 @@ async function loadOptions(){
     if(d2.ok){services=d2.services||[];populateServices();}
   }catch(e){showToast('載入選項失敗：'+e.message,'err');}
 }
-
 function populateOptions(){
   const clean=arr=>(arr||[]).filter(x=>x&&!String(x).startsWith('※'));
   const pm=clean(opts.pm);
@@ -344,25 +548,21 @@ function populateOptions(){
   fillSel('t_assignee',pm);
   fillSel('t_priority',clean(opts.priority),'中');
 }
-
 function populateServices(){
   const sel=$('#t_service');
   if(!services.length){sel.innerHTML='<option value="">（尚無進行中的服務）</option>';return;}
-  sel.innerHTML=services.map(s=>`<option value="${s.sid}">${s.sid}　${s.client} · ${s.item}</option>`).join('');
+  sel.innerHTML=services.map(s=>`<option value="${esc(s.sid)}">${esc(s.sid)}　${esc(s.client)} · ${esc(s.item)}</option>`).join('');
 }
-
 function fillSel(id,list,def){
   const sel=$('#'+id);if(!list||!list.length){sel.innerHTML='<option value="">（無選項）</option>';return;}
-  sel.innerHTML=list.map(x=>`<option value="${x}"${def===x?' selected':''}>${x}</option>`).join('');
+  sel.innerHTML=list.map(x=>`<option value="${esc(x)}"${def===x?' selected':''}>${esc(x)}</option>`).join('');
 }
-
 function recalcUnpaid(){
   const tot=Number($('#s_total').value)||0;
   const dep=Number($('#s_deposit').value)||0;
   const unpaid=Math.max(0,tot-dep);
   $('#s_unpaid').value='NT$'+unpaid.toLocaleString();
 }
-
 async function addService(e){
   e.preventDefault();
   const btn=e.target.querySelector('.submit');const orig=btn.textContent;
@@ -385,11 +585,27 @@ async function addService(e){
     const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
     const d=await r.json();
     if(!d.ok)throw new Error(d.error);
-    // Auto-add payment alert
+    // B1：自動建一列 SOP（服務完成追蹤用），失敗不擋流程
+    try{
+      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'task',serviceId:d.sid,workItem:'服務執行',assignee:data.pm,priority:data.priority,notes:'（自動建立）'})});
+    }catch(e2){}
+    // 財務追蹤：自動建列（或累積）合約金額 + 已收訂金
+    try{
+      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'finInit',sid:d.sid,client:data.client,item:data.serviceItem,contract:total,paid:deposit})});
+    }catch(e4){}
+    // 分期收款：優先寫入財務追蹤「下次收款日/金額」（雲端同步）；失敗才退回本機提醒
     if(nextPay&&unpaid>0){
-      const s=loadStore();
-      s.payments.push({id:Date.now(),sid:d.sid,client:data.client,item:data.serviceItem,amount:unpaid,date:nextPay,paid:false});
-      saveStore(s);
+      let cloudOk=false;
+      try{
+        const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateNextPay',sid:d.sid,date:nextPay,amount:unpaid})});
+        const dp=await rp.json();cloudOk=!!dp.ok;
+      }catch(e3){}
+      if(!cloudOk){
+        const s=loadStore();
+        s.payments.push({id:Date.now(),sid:d.sid,client:data.client,item:data.serviceItem,amount:unpaid,date:nextPay,paid:false});
+        saveStore(s);
+        showToast('財務追蹤查無此服務列，收款提醒改存本機','err');
+      }
     }
     // Auto-add invoice todo
     if(invoice){
@@ -401,11 +617,11 @@ async function addService(e){
     services.push({sid:d.sid,client:data.client,item:data.serviceItem});
     populateServices();
     renderAlerts();updateAlert();
+    loadProgress();loadCloudAlerts();
     showToast('✓ 新增成功 '+d.sid+(invoice?' · 已建立發票待辦':''),'ok');
     e.target.reset();$('#s_unpaid').value='NT$0';
   }catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}
 }
-
 async function addTask(e){
   e.preventDefault();
   const btn=e.target.querySelector('.submit');const orig=btn.textContent;
@@ -414,13 +630,11 @@ async function addTask(e){
   try{
     const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
     const d=await r.json();
-    if(d.ok){showToast('✓ 新增成功 '+d.tid,'ok');e.target.reset();}else throw new Error(d.error);
+    if(d.ok){showToast('✓ 新增成功 '+d.tid,'ok');e.target.reset();loadProgress();}else throw new Error(d.error);
   }catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}
 }
-
 function g(id){return $('#'+id).value.trim();}
 function showToast(msg,type){const t=$('#toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3000);}
-
 showTodayDate();
 renderHabits();
 renderWeekly();
@@ -429,6 +643,7 @@ renderAlerts();
 updateAlert();
 loadCloudAlerts();
 loadOptions();
+loadProgress();
 </script>
 </body>
 </html>
