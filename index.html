@@ -109,6 +109,10 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 .stat b.bad{color:var(--red);}
 .stat b.good{color:var(--green);}
 .stat b.m{font-size:12px;line-height:1.9;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip-item{padding:8px 12px;border:1px solid #D1DCE6;border-radius:16px;font-size:13px;cursor:pointer;background:#fff;font-family:inherit;color:#22303C;}
+.chip-item.on{background:var(--blue-dark);color:#fff;border-color:var(--blue-dark);}
+.hint{font-size:11px;color:var(--grey);margin-top:5px;line-height:1.5;}
 @media (max-width:480px){.grid2{grid-template-columns:1fr;gap:0;}.grid2 .row{margin-bottom:13px;}.tab{font-size:11px;padding:11px 2px;}}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#22303C;color:#fff;padding:11px 18px;border-radius:24px;font-size:13px;z-index:100;opacity:0;transition:opacity .25s;pointer-events:none;font-weight:700;}
 .toast.show{opacity:1;}.toast.ok{background:var(--green);}.toast.err{background:var(--red);}
@@ -186,7 +190,7 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <div class="form-card">
 <form onsubmit="addService(event)">
 <div class="row"><label>品牌客戶名稱<span class="req">*</span></label><input class="in" type="text" id="s_client" required placeholder="例：晨光咖啡"></div>
-<div class="row"><label>服務項目<span class="req">*</span></label><select class="in" id="s_item" required></select></div>
+<div class="row"><label>服務項目（可複選；第一個選的為主服務、記這筆金額）<span class="req">*</span></label><div class="chips" id="s_items"></div><div class="hint" id="s_itemsHint">載入選項中...</div></div>
 <div class="grid2">
 <div class="row"><label>負責 PM<span class="req">*</span></label><select class="in" id="s_pm" required></select></div>
 <div class="row"><label>狀態</label><select class="in" id="s_status"></select></div>
@@ -242,6 +246,7 @@ let services=[];
 let cloudAlerts=[];
 let progServices=[],progTasks=[],progFilter='active';
 let cloudFin=[];
+let itemOptions=[],selItems=[];
 function $(s){return document.querySelector(s);}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
@@ -488,9 +493,8 @@ function renewService(sid){
   if(!r)return;
   $('#s_client').value=r['所屬客戶']||'';
   const item=String(r['服務項目']||'');
-  const sel=$('#s_item');
-  if(item&&!Array.from(sel.options).some(o=>o.value===item)){const o=document.createElement('option');o.value=item;o.textContent=item;sel.appendChild(o);}
-  if(item)sel.value=item;
+  if(item){if(!itemOptions.includes(item))itemOptions.push(item);selItems=[item];}else{selItems=[];}
+  renderItemChips();
   const pm=String(r['負責PM']||'');if(pm&&Array.from($('#s_pm').options).some(o=>o.value===pm))$('#s_pm').value=pm;
   const pr=String(r['優先級']||'');if(pr&&Array.from($('#s_priority').options).some(o=>o.value===pr))$('#s_priority').value=pr;
   const md=String(r['進行方式']||'');if(md&&Array.from($('#s_mode').options).some(o=>o.value===md))$('#s_mode').value=md;
@@ -540,13 +544,32 @@ function populateOptions(){
   let items=clean(opts.items);
   const expanded=[];
   items.forEach(it=>{if(/Google\s*商家/.test(it)){expanded.push(it+'（三個月）');expanded.push(it+'（六個月）');}else{expanded.push(it);}});
-  fillSel('s_item',expanded);
+  renderItemChips(expanded);
   fillSel('s_pm',pm);
   fillSel('s_status',clean(opts.status),'進行中');
   fillSel('s_priority',clean(opts.priority),'中');
   fillSel('s_mode',clean(opts.mode),'同時進行');
   fillSel('t_assignee',pm);
   fillSel('t_priority',clean(opts.priority),'中');
+}
+// 服務項目複選 chips（第一個選的 = 主服務，記金額）
+function renderItemChips(list){
+  if(list&&list.length)itemOptions=list.slice();
+  selItems=selItems.filter(x=>itemOptions.includes(x));
+  const box=$('#s_items');
+  box.innerHTML=itemOptions.length?itemOptions.map(x=>`<button type="button" class="chip-item${selItems.includes(x)?' on':''}" data-v="${esc(x)}" onclick="toggleItem(this)">${esc(x)}</button>`).join(''):'<span class="hint">（無選項）</span>';
+  updateItemsHint();
+}
+function toggleItem(btn){
+  const v=btn.getAttribute('data-v');
+  const i=selItems.indexOf(v);
+  if(i>=0){selItems.splice(i,1);btn.classList.remove('on');}
+  else{selItems.push(v);btn.classList.add('on');}
+  updateItemsHint();
+}
+function updateItemsHint(){
+  const el=$('#s_itemsHint');if(!el)return;
+  el.textContent=selItems.length?('已選 '+selItems.length+' 項：'+selItems.join('、')+(selItems.length>1?'｜金額記在「'+selItems[0]+'」，其餘標示併入':'')):'請至少選 1 項';
 }
 function populateServices(){
   const sel=$('#t_service');
@@ -573,54 +596,70 @@ async function addService(e){
   const payment=g('s_payment');
   const nextPay=g('s_nextPay');
   const invoice=$('#s_invoice').checked;
-  const notesArr=[];
-  if(payment)notesArr.push('付款方式：'+payment);
-  if(deposit)notesArr.push('已收訂金 NT$'+deposit.toLocaleString());
-  if(unpaid)notesArr.push('未收 NT$'+unpaid.toLocaleString());
-  if(nextPay)notesArr.push('下次收款 '+nextPay);
-  notesArr.push('發票：'+(invoice?'是':'否'));
-  const extraNotes=g('s_notes');if(extraNotes)notesArr.push(extraNotes);
-  const data={type:'service',client:g('s_client'),serviceItem:g('s_item'),pm:g('s_pm'),status:g('s_status'),priority:g('s_priority'),mode:g('s_mode'),startDate:g('s_start'),endDate:g('s_end'),amount:total,notes:notesArr.join('｜')};
+  const extraNotes=g('s_notes');
+  const base={type:'service',client:g('s_client'),pm:g('s_pm'),status:g('s_status'),priority:g('s_priority'),mode:g('s_mode'),startDate:g('s_start'),endDate:g('s_end')};
+  const created=[];
   try{
-    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
-    const d=await r.json();
-    if(!d.ok)throw new Error(d.error);
-    // B1：自動建一列 SOP（服務完成追蹤用），失敗不擋流程
-    try{
-      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'task',serviceId:d.sid,workItem:'服務執行',assignee:data.pm,priority:data.priority,notes:'（自動建立）'})});
-    }catch(e2){}
-    // 財務追蹤：自動建列（或累積）合約金額 + 已收訂金
-    try{
-      await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'finInit',sid:d.sid,client:data.client,item:data.serviceItem,contract:total,paid:deposit})});
-    }catch(e4){}
-    // 分期收款：優先寫入財務追蹤「下次收款日/金額」（雲端同步）；失敗才退回本機提醒
-    if(nextPay&&unpaid>0){
-      let cloudOk=false;
+    let firstSid='';
+    for(let i=0;i<selItems.length;i++){
+      const item=selItems[i];
+      const notesArr=[];
+      if(i===0){
+        if(payment)notesArr.push('付款方式：'+payment);
+        if(deposit)notesArr.push('已收訂金 NT$'+deposit.toLocaleString());
+        if(unpaid)notesArr.push('未收 NT$'+unpaid.toLocaleString());
+        if(nextPay)notesArr.push('下次收款 '+nextPay);
+        notesArr.push('發票：'+(invoice?'是':'否'));
+      }else{
+        notesArr.push('金額併入 '+firstSid);
+      }
+      if(extraNotes)notesArr.push(extraNotes);
+      const data=Object.assign({},base,{serviceItem:item,amount:i===0?total:'',notes:notesArr.join('｜')});
+      const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+      const d=await r.json();
+      if(!d.ok)throw new Error(d.error);
+      created.push(d.sid);
+      services.push({sid:d.sid,client:base.client,item:item});
+      // 每個服務自動建一列 SOP（完成追蹤用）
       try{
-        const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateNextPay',sid:d.sid,date:nextPay,amount:unpaid})});
-        const dp=await rp.json();cloudOk=!!dp.ok;
-      }catch(e3){}
-      if(!cloudOk){
-        const s=loadStore();
-        s.payments.push({id:Date.now(),sid:d.sid,client:data.client,item:data.serviceItem,amount:unpaid,date:nextPay,paid:false});
-        saveStore(s);
-        showToast('財務追蹤查無此服務列，收款提醒改存本機','err');
+        await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'task',serviceId:d.sid,workItem:'服務執行',assignee:base.pm,priority:base.priority,notes:'（自動建立）'})});
+      }catch(e2){}
+      if(i===0){
+        firstSid=d.sid;
+        // 財務追蹤：主服務建列（合約金額 + 已收訂金）
+        try{
+          await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'finInit',sid:d.sid,client:base.client,item:item,contract:total,paid:deposit})});
+        }catch(e4){}
+        // 分期收款：寫財務追蹤 O/P；失敗退回本機提醒
+        if(nextPay&&unpaid>0){
+          let cloudOk=false;
+          try{
+            const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateNextPay',sid:d.sid,date:nextPay,amount:unpaid})});
+            const dp=await rp.json();cloudOk=!!dp.ok;
+          }catch(e3){}
+          if(!cloudOk){
+            const s=loadStore();
+            s.payments.push({id:Date.now(),sid:d.sid,client:base.client,item:item,amount:unpaid,date:nextPay,paid:false});
+            saveStore(s);
+            showToast('財務追蹤查無此服務列，收款提醒改存本機','err');
+          }
+        }
+        // 發票待辦（僅主服務建一次）
+        if(invoice){
+          const s=loadStore();
+          s.todos.push({id:Date.now()+1,name:base.client+' 開立發票（'+item+'）',cat:'工作',freq:'once',done:{}});
+          saveStore(s);
+          renderTodos();
+        }
       }
     }
-    // Auto-add invoice todo
-    if(invoice){
-      const s=loadStore();
-      s.todos.push({id:Date.now()+1,name:data.client+' 開立發票（'+data.serviceItem+'）',cat:'工作',freq:'once',done:{}});
-      saveStore(s);
-      renderTodos();
-    }
-    services.push({sid:d.sid,client:data.client,item:data.serviceItem});
     populateServices();
     renderAlerts();updateAlert();
     loadProgress();loadCloudAlerts();
-    showToast('✓ 新增成功 '+d.sid+(invoice?' · 已建立發票待辦':''),'ok');
+    showToast('✓ 新增成功 '+created.join('、')+(invoice?' · 已建立發票待辦':''),'ok');
     e.target.reset();$('#s_unpaid').value='NT$0';
-  }catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}
+    selItems=[];renderItemChips();
+  }catch(err){showToast('新增失敗：'+err.message+(created.length?'（已建立：'+created.join('、')+'）':''),'err');}finally{btn.disabled=false;btn.textContent=orig;}
 }
 async function addTask(e){
   e.preventDefault();
