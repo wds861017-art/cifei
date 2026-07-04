@@ -86,7 +86,7 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 .svc-meta{font-size:12px;color:var(--grey);padding:2px 14px 8px;line-height:1.5;}
 .pbar{height:8px;background:var(--light);border-radius:4px;overflow:hidden;margin:2px 14px 6px;}
 .pbar>div{height:100%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:4px;}
-.svc-ctrl{display:flex;align-items:center;gap:8px;padding:4px 14px 12px;}
+.svc-ctrl{display:flex;align-items:center;gap:8px;padding:4px 14px 12px;flex-wrap:wrap;}
 .svc-ctrl label{margin:0;font-size:12px;flex:none;}
 .svc-ctrl select{flex:1;padding:8px;border:1px solid #D1DCE6;border-radius:7px;font-size:13.5px;font-family:inherit;background:#fff;}
 .sop-list{border-top:1px dashed #D1DCE6;background:#FAFCFE;padding:4px 14px;}
@@ -320,7 +320,7 @@ async function loadCloudAlerts(){
     const clients=tableToRows(proj).filter(r=>r['品牌客戶名稱(專案名稱)']);
     const svcs=tableToRows(svc).filter(r=>r['服務編號']&&r['所屬客戶']);
     const a=[];
-    clients.forEach(c=>{if(c['整體狀態']==='結案')return;const fu=parseDate(c['下次跟進日期']);if(!fu)return;const diff=Math.round((fu-today)/864e5);if(diff<=7)a.push({key:'cli:'+c['客戶編號']+':'+(c['下次跟進日期']||''),type:'客戶跟進',badge:'b-tracking',name:c['品牌客戶名稱(專案名稱)'],sub:'',date:fu,diff:diff});});
+    clients.forEach(c=>{if(c['整體狀態']==='結案')return;const fu=parseDate(c['下次跟進日期']);if(!fu)return;const diff=Math.round((fu-today)/864e5);if(diff<=7)a.push({key:'cli:'+c['客戶編號']+':'+(c['下次跟進日期']||''),cid:String(c['客戶編號']||'').trim(),type:'客戶跟進',badge:'b-tracking',name:c['品牌客戶名稱(專案名稱)'],sub:'',date:fu,diff:diff});});
     svcs.forEach(s=>{if(s['服務狀態']==='結案'||s['服務狀態']==='已完成')return;const ed=parseDate(s['服務結束日']);if(!ed)return;const diff=Math.round((ed-today)/864e5);if(diff<=14)a.push({key:'svc:'+s['服務編號']+':'+(s['服務結束日']||''),type:'服務到期',badge:'b-deadline',name:s['所屬客戶'],sub:s['服務項目']+'（'+s['服務編號']+'）',date:ed,diff:diff});});
     cloudFin=tableToRows(fin).filter(r=>/^S\d/.test(String(r['服務編號']||'').trim()));
     cloudFin.forEach(f=>{
@@ -343,7 +343,7 @@ function renderAlerts(){
   items.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;return a.date-b.date;});
   const undone=items.filter(i=>!i.done).length;
   $('#alertCount').textContent=undone+'/'+items.length+' 件';
-  $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const isFpay=!isPay&&String(a.key).indexOf('fpay:')===0;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:(isFpay?`onclick="confirmPayment('${a.sid}',${a.amount},'${a.key}')"`:`onclick="toggleCloudAlert('${a.key}')"`);const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${esc(a.name)}</b>${a.sub?'<em>'+esc(a.sub)+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div><button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
+  $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const isFpay=!isPay&&String(a.key).indexOf('fpay:')===0;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:(isFpay?`onclick="confirmPayment('${a.sid}',${a.amount},'${a.key}')"`:`onclick="toggleCloudAlert('${a.key}')"`);const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;const calBtn=(!isPay&&String(a.key).indexOf('cli:')===0)?`<button class="del" title="改跟進日" onclick="setFollowUp('${a.cid}','${esc(a.name)}')">📅</button>`:'';return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${esc(a.name)}</b>${a.sub?'<em>'+esc(a.sub)+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div>${calBtn}<button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
 }
 function toggleCloudAlert(key){const s=loadStore();s.alertState[key]=s.alertState[key]||{};s.alertState[key].done=!s.alertState[key].done;saveStore(s);renderAlerts();updateAlert();}
 function dismissAlert(key){if(!confirm('確定移除這個提醒？'))return;const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);renderAlerts();updateAlert();}
@@ -427,7 +427,7 @@ function renderProgress(){
 <div class="svc-meta">${finLine}</div>
 <div class="svc-meta">📅 ${fmtD(sd)} ～ ${fmtD(ed)}</div>
 ${pct===null?'':`<div class="pbar"><div style="width:${pct}%"></div></div>`}
-<div class="svc-ctrl"><label>狀態</label>${selHtml}<button class="mini-btn" onclick="renewService('${sid}')">🔁 續約</button><button class="mini-btn" onclick="setPayReminder('${sid}')">💰 收款</button></div>
+<div class="svc-ctrl"><label>狀態</label>${selHtml}<button class="mini-btn" onclick="renewService('${sid}')">🔁 續約</button><button class="mini-btn" onclick="setPayReminder('${sid}')">💰 收款</button><button class="mini-btn" onclick="postponeService('${sid}')">📅 延期</button></div>
 </div>`;
   }).join('')||'<div class="empty">沒有符合的服務</div>';
   renderStats();
@@ -487,6 +487,37 @@ async function confirmPayment(sid,amount,key){
   }catch(e){showToast('回寫失敗：'+e.message,'err');}
 }
 function fmtInputDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// 延期：改服務結束日（寫回服務項目表 F 欄）
+async function postponeService(sid){
+  const r=progServices.find(s=>String(s['服務編號']).trim()===sid);
+  if(!r)return;
+  const ed=parseDate(r['服務結束日']);
+  const date=prompt('新的結束日（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
+  if(!date)return;
+  if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
+  try{
+    const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateEndDate',sid:sid,date:date.trim()})});
+    const d=await rp.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    r['服務結束日']=date.trim();
+    showToast('✓ '+sid+' 結束日 → '+date.trim(),'ok');
+    renderProgress();loadCloudAlerts();
+  }catch(e){showToast('延期失敗：'+e.message,'err');}
+}
+// 改下次跟進日期（寫回專案總表 K 欄）
+async function setFollowUp(cid,name){
+  const def=fmtInputDate(new Date(today.getTime()+7*864e5));
+  const date=prompt('「'+name+'」下次跟進日期（YYYY-MM-DD）',def);
+  if(!date)return;
+  if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
+  try{
+    const rp=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'updateFollowUp',cid:cid,date:date.trim()})});
+    const d=await rp.json();
+    if(!d.ok)throw new Error(d.error||'寫入失敗');
+    showToast('✓ '+name+' 跟進日 → '+date.trim(),'ok');
+    loadCloudAlerts();
+  }catch(e){showToast('更新失敗：'+e.message,'err');}
+}
 // 續約：帶入舊服務資料到新增服務表單（新 S 編號、起始日=舊結束日+1）
 function renewService(sid){
   const r=progServices.find(s=>String(s['服務編號']).trim()===sid);
