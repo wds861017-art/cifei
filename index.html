@@ -204,9 +204,9 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <div class="row"><label>結束日</label><input class="in" type="date" id="s_end"></div>
 </div>
 <div class="fin-card">
-<div class="row"><label>💰 總成交金額（NT$）<span class="req">*</span></label><input class="in" type="number" id="s_total" min="0" step="1000" inputmode="numeric" oninput="recalcUnpaid()"></div>
+<div class="row"><label>💰 總成交金額（NT$）<span class="req">*</span></label><input class="in" type="number" id="s_total" min="0" step="any" inputmode="numeric" oninput="recalcUnpaid()"></div>
 <div class="grid2">
-<div class="row"><label>已收訂金（NT$）</label><input class="in" type="number" id="s_deposit" min="0" step="1000" inputmode="numeric" oninput="recalcUnpaid()"></div>
+<div class="row"><label>已收訂金（NT$）</label><input class="in" type="number" id="s_deposit" min="0" step="any" inputmode="numeric" oninput="recalcUnpaid()"></div>
 <div class="row"><label>付款方式</label><select class="in" id="s_payment"><option value="一次付清">一次付清</option><option value="分兩期">分兩期</option><option value="分三期">分三期</option><option value="月付">月付</option><option value="其他">其他</option></select></div>
 </div>
 <div class="row"><label>未收款項（自動計算）</label><input class="in" type="text" id="s_unpaid" readonly value="NT$0"></div>
