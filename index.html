@@ -153,14 +153,6 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 </div>
 </div>
 <div class="section">
-<div class="sec-head"><h2>📅 每週任務</h2><span class="count" id="weeklyCount">0/0</span></div>
-<div class="list" id="weekly"></div>
-<div class="add-row">
-<input id="weeklyInput" placeholder="新增每週任務..." onkeydown="if(event.key==='Enter')addWeekly()">
-<button onclick="addWeekly()">＋</button>
-</div>
-</div>
-<div class="section">
 <div class="sec-head"><h2>✅ 待辦事項</h2><span class="count" id="todoCount">0/0</span></div>
 <div class="list" id="todos"></div>
 <div class="add-row">
@@ -188,7 +180,7 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 </div>
 <div id="page-service" class="page">
 <div class="form-card">
-<form onsubmit="addService(event)">
+<form onsubmit="addService(event)" novalidate>
 <div class="row"><label>品牌客戶名稱<span class="req">*</span></label><input class="in" type="text" id="s_client" required placeholder="例：晨光咖啡"></div>
 <div class="row"><label>服務項目（可複選；第一個選的為主服務、記這筆金額）<span class="req">*</span></label><div class="chips" id="s_items"></div><div class="hint" id="s_itemsHint">載入選項中...</div></div>
 <div class="grid2">
@@ -213,7 +205,8 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <div class="row"><label>後續收款日期（到期會自動加進提醒）</label><input class="in" type="date" id="s_nextPay"></div>
 </div>
 <div class="row">
-<div class="invoice-toggle"><input type="checkbox" id="s_invoice"><label for="s_invoice">📄 此服務需開立發票（勾選後會自動建立「開立發票」待辦）</label></div>
+<div class="invoice-toggle"><input type="checkbox" id="s_invoice" onchange="recalcUnpaid()"><label for="s_invoice">📄 此服務需開立發票（勾選後會自動建立「開立發票」待辦）</label></div>
+<div class="hint" id="taxInfo" style="display:none"></div>
 </div>
 <div class="row"><label>備註</label><textarea class="in" id="s_notes" placeholder="（可選）"></textarea></div>
 <button class="submit" type="submit">＋ 新增到「服務項目表」</button>
@@ -278,15 +271,14 @@ function renderHabits(){
   const t=s.habits.length,d=s.habits.filter(h=>h.done[k]).length;
   const c=$('#habitCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
 }
-// ----- Weekly -----
-function addWeekly(){const i=$('#weeklyInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.weekly.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderWeekly();updateAlert();}
-function toggleWeekly(id){const s=loadStore();const w=s.weekly.find(w=>w.id===id);const k=weekKey();w.done[k]=!w.done[k];saveStore(s);renderWeekly();updateAlert();}
-function delWeekly(id){if(!confirm('確定刪除這個每週任務？'))return;const s=loadStore();s.weekly=s.weekly.filter(w=>w.id!==id);saveStore(s);renderWeekly();updateAlert();}
-function renderWeekly(){
-  const s=loadStore();const k=weekKey();
-  $('#weekly').innerHTML=s.weekly.length?s.weekly.map(w=>{const on=!!w.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleWeekly(${w.id})"></div><div class="name">${esc(w.name)}</div><button class="del" onclick="delWeekly(${w.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每週任務</div>';
-  const t=s.weekly.length,d=s.weekly.filter(w=>w.done[k]).length;
-  const c=$('#weeklyCount');c.textContent=d+'/'+t;c.className='count'+(t&&d===t?' done':'');
+// ----- Weekly（區塊已併入待辦事項；舊資料自動搬移，頻率=每週）-----
+function migrateWeekly(){
+  const s=loadStore();
+  if(s.weekly&&s.weekly.length){
+    s.weekly.forEach(w=>s.todos.push({id:w.id,name:w.name,cat:'工作',freq:'weekly',done:w.done||{}}));
+    s.weekly=[];
+    saveStore(s);
+  }
 }
 // ----- Todos (with category) -----
 function addTodo(){const i=$('#todoInput');const n=i.value.trim();if(!n)return;const cat=$('#todoCat').value;const f=$('#todoFreq').value;const s=loadStore();s.todos.push({id:Date.now(),name:n,cat:cat,freq:f,done:{}});saveStore(s);i.value='';renderTodos();updateAlert();}
@@ -352,11 +344,10 @@ function delPayment(id){if(!confirm('確定刪除這個收款提醒？'))return;
 function updateAlert(){
   const s=loadStore();const k=todayKey(),wk=weekKey();
   const h=s.habits.filter(h=>!h.done[k]).length;
-  const w=s.weekly.filter(w=>!w.done[wk]).length;
   const t=s.todos.filter(t=>{const kk=t.freq==='weekly'?wk:(t.freq==='daily'?k:'_one');return !t.done[kk];}).length;
   const p=s.payments.filter(p=>{if(p.paid)return false;const d=parseDate(p.date);if(!d)return false;return Math.round((d-today)/864e5)<=7;}).length;
   const cd=cloudAlerts.filter(a=>{if(s.alertState[a.key]&&s.alertState[a.key].done)return false;return a.diff<=7;}).length;
-  const parts=[];if(h)parts.push(h+' 個習慣');if(w)parts.push(w+' 個每週任務');if(t)parts.push(t+' 個待辦');if(cd+p)parts.push((cd+p)+' 個近期專案提醒');
+  const parts=[];if(h)parts.push(h+' 個習慣');if(t)parts.push(t+' 個待辦');if(cd+p)parts.push((cd+p)+' 個近期專案提醒');
   const el=$('#todayAlert');
   if(parts.length){el.textContent='⚠️ 未完成：'+parts.join('、');el.className='alert';}else{el.textContent='✅ 今日待辦全部完成，做得好！';el.className='alert ok';}
 }
@@ -616,17 +607,33 @@ function recalcUnpaid(){
   const dep=Number($('#s_deposit').value)||0;
   const unpaid=Math.max(0,tot-dep);
   $('#s_unpaid').value='NT$'+unpaid.toLocaleString();
+  // 開發票時自動拆未稅價與稅額（5%）；不開發票不區分
+  const el=$('#taxInfo');
+  if(el){
+    if($('#s_invoice').checked&&tot>0){
+      const net=Math.round(tot/1.05);
+      const tax=tot-net;
+      el.textContent='📄 含稅 '+fmtM(tot)+' ＝ 未稅 '+fmtM(net)+' ＋ 稅額(5%) '+fmtM(tax)+'，送出時會記入備註';
+      el.style.display='block';
+    }else{el.style.display='none';}
+  }
 }
 async function addService(e){
   e.preventDefault();
-  const btn=e.target.querySelector('.submit');const orig=btn.textContent;
-  btn.disabled=true;btn.textContent='新增中...';
+  if(!g('s_client')){showToast('請填品牌客戶名稱','err');return;}
+  if(!selItems.length){showToast('請至少選擇 1 個服務項目','err');return;}
   const total=Number(g('s_total'))||0;
   const deposit=Number(g('s_deposit'))||0;
+  if(total<0||deposit<0){showToast('金額不可為負數','err');return;}
+  if(deposit>total&&total>0){showToast('訂金不可大於總成交金額','err');return;}
+  const btn=e.target.querySelector('.submit');const orig=btn.textContent;
+  btn.disabled=true;btn.textContent='新增中...';
   const unpaid=Math.max(0,total-deposit);
   const payment=g('s_payment');
   const nextPay=g('s_nextPay');
   const invoice=$('#s_invoice').checked;
+  const netAmt=(invoice&&total>0)?Math.round(total/1.05):0;
+  const taxAmt=(invoice&&total>0)?total-netAmt:0;
   const extraNotes=g('s_notes');
   const base={type:'service',client:g('s_client'),pm:g('s_pm'),status:g('s_status'),priority:g('s_priority'),mode:g('s_mode'),startDate:g('s_start'),endDate:g('s_end')};
   const created=[];
@@ -641,6 +648,7 @@ async function addService(e){
         if(unpaid)notesArr.push('未收 NT$'+unpaid.toLocaleString());
         if(nextPay)notesArr.push('下次收款 '+nextPay);
         notesArr.push('發票：'+(invoice?'是':'否'));
+        if(invoice&&total>0)notesArr.push('未稅 NT$'+netAmt.toLocaleString()+'｜稅額(5%) NT$'+taxAmt.toLocaleString());
       }else{
         notesArr.push('金額併入 '+firstSid);
       }
@@ -706,8 +714,8 @@ async function addTask(e){
 function g(id){return $('#'+id).value.trim();}
 function showToast(msg,type){const t=$('#toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3000);}
 showTodayDate();
+migrateWeekly();
 renderHabits();
-renderWeekly();
 renderTodos();
 renderAlerts();
 updateAlert();
