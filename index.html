@@ -251,6 +251,9 @@ function fmtRelDate(diff){if(diff<0)return{txt:'逾期 '+Math.abs(diff)+' 天',c
 function fmtM(n){return'NT$'+(Number(n)||0).toLocaleString();}
 function toNum(v){return typeof v==='number'?v:(Number(String(v==null?'':v).replace(/[^0-9.\-]/g,''))||0);}
 function fmtD(d){return d?d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate():'—';}
+function uiModal(o){return new Promise(function(resolve){var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(15,30,50,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;';var box=document.createElement('div');box.style.cssText='background:#fff;border-radius:14px;max-width:340px;width:100%;padding:18px 18px 14px;box-shadow:0 12px 40px rgba(0,0,0,.25);';var m=document.createElement('div');m.style.cssText='font-size:15px;color:#22303C;line-height:1.5;white-space:pre-wrap;margin-bottom:14px;';m.textContent=o.message||'';box.appendChild(m);var input=null;if(o.prompt){input=document.createElement('input');input.type='text';input.value=o.def||'';input.style.cssText='width:100%;padding:11px 12px;border:1px solid #D1DCE6;border-radius:8px;font-size:16px;margin-bottom:14px;box-sizing:border-box;';box.appendChild(input);}var row=document.createElement('div');row.style.cssText='display:flex;gap:8px;justify-content:flex-end;';var cc=document.createElement('button');cc.textContent='取消';cc.style.cssText='padding:10px 16px;border:1px solid #D1DCE6;background:#fff;border-radius:8px;font-size:14px;font-weight:700;color:#5A6B7B;';var kk=document.createElement('button');kk.textContent=o.okText||'確定';kk.style.cssText='padding:10px 18px;border:none;background:#0F4C81;color:#fff;border-radius:8px;font-size:14px;font-weight:700;';row.appendChild(cc);row.appendChild(kk);box.appendChild(row);ov.appendChild(box);document.body.appendChild(ov);if(input){setTimeout(function(){input.focus();input.select();},50);}function close(v){try{document.body.removeChild(ov);}catch(e){}resolve(v);}cc.onclick=function(){close(o.prompt?null:false);};kk.onclick=function(){close(o.prompt?input.value:true);};ov.onclick=function(e){if(e.target===ov)close(o.prompt?null:false);};if(input){input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();kk.onclick();}});}});}
+function uiConfirm(msg){return uiModal({message:msg});}
+function uiPrompt(msg,def){return uiModal({message:msg,prompt:true,def:def});}
 function showTab(name,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
@@ -264,7 +267,7 @@ function showTodayDate(){
 // ----- Habits -----
 function addHabit(){const i=$('#habitInput');const n=i.value.trim();if(!n)return;const s=loadStore();s.habits.push({id:Date.now(),name:n,done:{}});saveStore(s);i.value='';renderHabits();updateAlert();}
 function toggleHabit(id){const s=loadStore();const h=s.habits.find(h=>h.id===id);const k=todayKey();h.done[k]=!h.done[k];saveStore(s);renderHabits();updateAlert();}
-function delHabit(id){if(!confirm('確定刪除這個習慣？'))return;const s=loadStore();s.habits=s.habits.filter(h=>h.id!==id);saveStore(s);renderHabits();updateAlert();}
+async function delHabit(id){if(!await uiConfirm('確定刪除這個習慣？'))return;const s=loadStore();s.habits=s.habits.filter(h=>h.id!==id);saveStore(s);renderHabits();updateAlert();}
 function renderHabits(){
   const s=loadStore();const k=todayKey();
   $('#habits').innerHTML=s.habits.length?s.habits.map(h=>{const on=!!h.done[k];return `<div class="task ${on?'done':''}"><div class="check ${on?'on':''}" onclick="toggleHabit(${h.id})"></div><div class="name">${esc(h.name)}</div><button class="del" onclick="delHabit(${h.id})">×</button></div>`;}).join(''):'<div class="empty">點下方欄位新增每日習慣</div>';
@@ -283,7 +286,7 @@ function migrateWeekly(){
 // ----- Todos (with category) -----
 function addTodo(){const i=$('#todoInput');const n=i.value.trim();if(!n)return;const cat=$('#todoCat').value;const f=$('#todoFreq').value;const s=loadStore();s.todos.push({id:Date.now(),name:n,cat:cat,freq:f,done:{}});saveStore(s);i.value='';renderTodos();updateAlert();}
 function toggleTodo(id){const s=loadStore();const t=s.todos.find(t=>t.id===id);const k=t.freq==='weekly'?weekKey():(t.freq==='daily'?todayKey():'_one');t.done[k]=!t.done[k];if(t.freq==='once'&&t.done[k]){s.todos=s.todos.filter(x=>x.id!==id);}saveStore(s);renderTodos();updateAlert();}
-function delTodo(id){if(!confirm('確定刪除這個待辦？'))return;const s=loadStore();s.todos=s.todos.filter(t=>t.id!==id);saveStore(s);renderTodos();updateAlert();}
+async function delTodo(id){if(!await uiConfirm('確定刪除這個待辦？'))return;const s=loadStore();s.todos=s.todos.filter(t=>t.id!==id);saveStore(s);renderTodos();updateAlert();}
 function renderTodos(){
   const s=loadStore();
   const ord={'工作':1,'會務':2,'私人':3};
@@ -338,9 +341,9 @@ function renderAlerts(){
   $('#projectAlerts').innerHTML=items.length?items.map(a=>{const r=fmtRelDate(a.diff);const isPay=!!a.paymentId;const isFpay=!isPay&&String(a.key).indexOf('fpay:')===0;const onAct=isPay?`onclick="togglePayment(${a.paymentId})"`:(isFpay?`onclick="confirmPayment('${a.sid}',${a.amount},'${a.key}')"`:`onclick="toggleCloudAlert('${a.key}')"`);const delAct=isPay?`onclick="delPayment(${a.paymentId})"`:`onclick="dismissAlert('${a.key}')"`;const calBtn=(!isPay&&String(a.key).indexOf('cli:')===0)?`<button class="del" title="改跟進日" onclick="setFollowUp('${a.cid}','${esc(a.name)}')">📅</button>`:'';return `<div class="alert-row ${a.done?'done':''}"><div class="check ${a.done?'on':''}" ${onAct}></div><span class="badge ${a.badge}">${a.type}</span><div class="alert-name"><b>${esc(a.name)}</b>${a.sub?'<em>'+esc(a.sub)+'</em>':''}</div><div class="dt ${r.cls}">${r.txt}</div>${calBtn}<button class="del" ${delAct}>×</button></div>`;}).join(''):'<div class="empty">✓ 近期沒有專案到期</div>';
 }
 function toggleCloudAlert(key){const s=loadStore();s.alertState[key]=s.alertState[key]||{};s.alertState[key].done=!s.alertState[key].done;saveStore(s);renderAlerts();updateAlert();}
-function dismissAlert(key){if(!confirm('確定移除這個提醒？'))return;const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);renderAlerts();updateAlert();}
+async function dismissAlert(key){if(!await uiConfirm('確定移除這個提醒？'))return;const s=loadStore();s.alertState[key]={done:true,dismissed:true};saveStore(s);renderAlerts();updateAlert();}
 function togglePayment(id){const s=loadStore();const p=s.payments.find(p=>p.id===id);if(p)p.paid=!p.paid;saveStore(s);renderAlerts();updateAlert();}
-function delPayment(id){if(!confirm('確定刪除這個收款提醒？'))return;const s=loadStore();s.payments=s.payments.filter(p=>p.id!==id);saveStore(s);renderAlerts();updateAlert();}
+async function delPayment(id){if(!await uiConfirm('確定刪除這個收款提醒？'))return;const s=loadStore();s.payments=s.payments.filter(p=>p.id!==id);saveStore(s);renderAlerts();updateAlert();}
 function updateAlert(){
   const s=loadStore();const k=todayKey(),wk=weekKey();
   const h=s.habits.filter(h=>!h.done[k]).length;
@@ -467,7 +470,7 @@ function renderStats(){
 }
 // 收款一鍵回寫：確認已收 → 財務追蹤已收金額累加、清除下次收款日/金額
 async function confirmPayment(sid,amount,key){
-  if(!confirm('確認已收到 '+fmtM(amount)+'？\n將寫回財務追蹤（已收金額 +'+fmtM(amount)+'，並清除下次收款日）'))return;
+  if(!await uiConfirm('確認已收到 '+fmtM(amount)+'？\n將寫回財務追蹤（已收金額 +'+fmtM(amount)+'，並清除下次收款日）'))return;
   try{
     const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({type:'confirmPayment',sid:sid,amount:amount})});
     const d=await r.json();
@@ -483,7 +486,7 @@ async function postponeService(sid){
   const r=progServices.find(s=>String(s['服務編號']).trim()===sid);
   if(!r)return;
   const ed=parseDate(r['服務結束日']);
-  const date=prompt('新的結束日（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
+  const date=await uiPrompt('新的結束日（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
   if(!date)return;
   if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
   try{
@@ -498,7 +501,7 @@ async function postponeService(sid){
 // 改下次跟進日期（寫回專案總表 K 欄）
 async function setFollowUp(cid,name){
   const def=fmtInputDate(new Date(today.getTime()+7*864e5));
-  const date=prompt('「'+name+'」下次跟進日期（YYYY-MM-DD）',def);
+  const date=await uiPrompt('「'+name+'」下次跟進日期（YYYY-MM-DD）',def);
   if(!date)return;
   if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
   try{
@@ -535,10 +538,10 @@ async function setPayReminder(sid){
   const fin=cloudFin.find(f=>String(f['服務編號']).trim()===sid);
   const owed=fin?toNum(fin['未收金額']):0;
   const ed=parseDate(r&&r['服務結束日']);
-  const date=prompt('收款日期（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
+  const date=await uiPrompt('收款日期（YYYY-MM-DD）',ed?fmtInputDate(ed):'');
   if(!date)return;
   if(!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date.trim())){showToast('日期格式錯誤，請用 YYYY-MM-DD','err');return;}
-  const amt=prompt('應收金額（NT$）'+(owed>0?'，目前應收 '+fmtM(owed):''),owed>0?String(owed):'');
+  const amt=await uiPrompt('應收金額（NT$）'+(owed>0?'，目前應收 '+fmtM(owed):''),owed>0?String(owed):'');
   if(amt===null)return;
   const n=toNum(amt);
   if(n<=0){showToast('金額需大於 0','err');return;}
