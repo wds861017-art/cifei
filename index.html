@@ -12,7 +12,7 @@ header{background:linear-gradient(110deg,var(--blue-dark),var(--blue));color:#ff
 .logo{width:44px;height:44px;flex:none;}
 h1{font-size:17px;font-weight:700;}
 .sub{font-size:10.5px;color:var(--gold);letter-spacing:1.5px;margin-top:2px;}
-.tabnav{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--blue-dark);position:sticky;top:0;z-index:50;}
+.tabnav{display:grid;grid-template-columns:repeat(5,1fr);background:var(--blue-dark);position:sticky;top:0;z-index:50;}
 .tab{padding:13px 2px;background:transparent;border:none;color:#9DB6CB;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;}
 .tab.active{color:#fff;border-bottom-color:var(--gold);background:rgba(255,255,255,.05);}
 .wrap{padding:14px;max-width:580px;margin:0 auto;}
@@ -136,7 +136,7 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 <button class="tab active" onclick="showTab('todo',this)">📋 每日待辦</button>
 <button class="tab" onclick="showTab('progress',this)">📊 專案進度</button>
 <button class="tab" onclick="showTab('service',this)">📦 新增服務</button>
-<button class="tab" onclick="showTab('task',this)">✅ 新增SOP</button>
+<button class="tab" onclick="showTab('task',this)">✅ 新增SOP</button><button class="tab" onclick="showTab('perf',this)">📈 新增成效</button>
 </div>
 <div class="wrap">
 <div id="page-todo" class="page active">
@@ -227,10 +227,11 @@ input.in[readonly]{background:#EEF3F8;color:var(--blue-dark);font-weight:700;}
 </form>
 </div>
 </div>
+<div id="page-perf" class="page"><div class="form-card"><form onsubmit="addPerf(event)"><div class="row"><label>選擇服務<span class="req">*</span></label><select class="in" id="p_service" required onchange="onPerfService()"></select></div><div class="grid2"><div class="row"><label>期間</label><input class="in" type="text" id="p_period" placeholder="2026-07 或 2026/05-07"></div><div class="row"><label>達成率</label><input class="in" type="text" id="p_rate" placeholder="例：100%"></div></div><div class="row"><label>成效指標（依服務自動帶入名稱，填數值）</label></div><div class="grid2"><div class="row"><label id="p_m1l">指標1</label><input class="in" id="p_m1v" placeholder="數值"></div><div class="row"><label id="p_m2l">指標2</label><input class="in" id="p_m2v" placeholder="數值"></div></div><div class="grid2"><div class="row"><label id="p_m3l">指標3</label><input class="in" id="p_m3v" placeholder="數值"></div><div class="row"><label id="p_m4l">指標4</label><input class="in" id="p_m4v" placeholder="數值"></div></div><div class="row"><label>本月亮點</label><textarea class="in" id="p_highlight" placeholder="（可選）本期最有感的成果"></textarea></div><div class="row"><label>佐證連結</label><input class="in" id="p_link" placeholder="（可選）文章／報表／貼文連結"></div><button class="submit" type="submit">＋ 新增到「成效追蹤」</button></form></div></div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyiDcairhyWtG5hPdxohr_0qYhRR1t6nRuWL-_KBfusCVHymAxlXpqJhP3oxYYyn-rC/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbzU3JXblmzkt5uWxwPRuQKBN1CxlxVAAHcLZ_82J38uBu3_sID-QCDmgxoPs7xFFb3A/exec';
 const SHEET_ID='1VE9a4J8R7PkuzvyLuQSYDTZTV9aaMHjA4VGpwIrFR9M';
 const KEY='cifei_todos_v3';
 const today=new Date();today.setHours(0,0,0,0);
@@ -559,14 +560,14 @@ async function loadOptions(){
     const r=await fetch(SCRIPT_URL+'?list=options');const d=await r.json();
     if(d.ok){opts=d;populateOptions();}
     const r2=await fetch(SCRIPT_URL+'?list=services');const d2=await r2.json();
-    if(d2.ok){services=d2.services||[];populateServices();}
+    if(d2.ok){services=d2.services||[];populateServices();populatePerfServices();}
   }catch(e){showToast('載入選項失敗：'+e.message,'err');}
 }
 function populateOptions(){
   const clean=arr=>(arr||[]).filter(x=>x&&!String(x).startsWith('※'));
   const pm=clean(opts.pm);
   // Expand Google商家 into 3-month / 6-month options
-  let items=clean(opts.items);
+  let items=clean(opts.items).filter(function(x){return String(x).indexOf('直播帶貨')<0;});
   const expanded=[];
   items.forEach(it=>{if(/Google\s*商家/.test(it)){expanded.push(it+'（三個月）');expanded.push(it+'（六個月）');}else{expanded.push(it);}});
   renderItemChips(expanded);
@@ -716,6 +717,12 @@ async function addTask(e){
 }
 function g(id){return $('#'+id).value.trim();}
 function showToast(msg,type){const t=$('#toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3000);}
+
+var PERF_METRICS={'團購':['銷售額(GMV)','訂單/成團數','客單價',''],'Google商家':['評分','評論總數','期內新增評論','顧客行動(來電/點擊)'],'五星評論':['本月完成則數','累計則數','目標則數','當前評分'],'口碑文章':['文章篇數','刊登平台','累計瀏覽','互動數'],'新聞':['露出媒體數','露出則數','媒體名單',''],'KOL':['合作人數','貼文數','觸及',''],'網紅':['合作人數','貼文數','觸及','']};
+function perfMetricSet(item){item=String(item||'');var ks=['團購','Google商家','五星評論','口碑文章','新聞','KOL','網紅'];for(var i=0;i<ks.length;i++){if(item.indexOf(ks[i])>=0)return PERF_METRICS[ks[i]];}return['指標1','指標2','指標3','指標4'];}
+function populatePerfServices(){var sel=document.getElementById('p_service');if(!sel)return;if(!services||!services.length){sel.innerHTML='<option value="">（尚無進行中的服務）</option>';}else{sel.innerHTML=services.map(function(s){return '<option value="'+esc(s.sid)+'" data-item="'+esc(s.item)+'" data-client="'+esc(s.client)+'">'+esc(s.sid)+'　'+esc(s.client)+' · '+esc(s.item)+'</option>';}).join('');}var pp=document.getElementById('p_period');if(pp&&!pp.value){var d=new Date();pp.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}onPerfService();}
+function onPerfService(){var sel=document.getElementById('p_service');if(!sel||!sel.options.length)return;var opt=sel.options[sel.selectedIndex];if(!opt)return;var item=opt.getAttribute('data-item')||'';var m=perfMetricSet(item);['1','2','3','4'].forEach(function(n,i){var l=document.getElementById('p_m'+n+'l');if(l)l.textContent=m[i]||('指標'+n);var v=document.getElementById('p_m'+n+'v');if(v){v.disabled=!m[i];v.placeholder=m[i]?'數值':'（此服務不需填）';if(!m[i])v.value='';}});}
+async function addPerf(e){e.preventDefault();var btn=e.target.querySelector('.submit');var orig=btn.textContent;btn.disabled=true;btn.textContent='新增中...';var sel=document.getElementById('p_service');var opt=sel.options[sel.selectedIndex];if(!opt){showToast('請先選服務','err');btn.disabled=false;btn.textContent=orig;return;}var item=opt.getAttribute('data-item')||'';var client=opt.getAttribute('data-client')||'';var m=perfMetricSet(item);var data={type:'perf',sid:sel.value,item:item,client:client,pm:'',period:g('p_period'),m1n:m[0]||'',m1v:g('p_m1v'),m2n:m[1]||'',m2v:g('p_m2v'),m3n:m[2]||'',m3v:g('p_m3v'),m4n:m[3]||'',m4v:g('p_m4v'),rate:g('p_rate'),highlight:g('p_highlight'),link:g('p_link')};try{var r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});var d=await r.json();if(d.ok){showToast('✓ 成效已記錄 '+d.rid,'ok');e.target.reset();populatePerfServices();}else throw new Error(d.error);}catch(err){showToast('新增失敗：'+err.message,'err');}finally{btn.disabled=false;btn.textContent=orig;}}
 showTodayDate();
 migrateWeekly();
 renderHabits();
